@@ -13,7 +13,43 @@ flow:
   - name: hello_world
     filter:
       - date_range_precision_tuning:
+          time_precision: 9
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 8
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 7
+      - dump:
+          request: true
+      - date_range_precision_tuning:
           time_precision: 6
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 5
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 4
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 3
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 2
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 1
+      - dump:
+          request: true
+      - date_range_precision_tuning:
+          time_precision: 0
       - dump:
           request: true
 router:

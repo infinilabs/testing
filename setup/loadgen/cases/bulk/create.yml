@@ -39,5 +39,5 @@ requests:
         username: ingest
         password: password
       url: http://127.0.0.1:8000/_bulk
-      body_repeat_times: 1
+      body_repeat_times: 1000
       body: "{ \"create\" : { \"_index\" : \"ab-test-$[[suffix]]\",\"_type\":\"_doc\", \"_id\" : \"$[[id]]\" , \"routing\" : \"$[[routing_no]]\" } }\n{ \"id\" : \"$[[uuid]]\",\"routing_no\" : \"$[[routing_no]]\",\"batch_number\" : \"$[[batch_no]]\", \"random_no\" : \"$[[suffix]]\",\"ip\" : \"$[[ip]]\",\"now_local\" : \"$[[now_local]]\",\"now_with_format\" : \"$[[now_with_format]]\",\"now_unix\" : \"$[[now_unix]]\" }\n"

@@ -14,15 +14,15 @@ flow:
 #      - set_context:
 #          context:
 #            _ctx.request.method: DELETE
-#            _ctx.request.path: /bot_index/_searchvv
+#            _ctx.request.path: /bot_index/_search
       - http:
 #          schema: "https" #https or http
           schema: "http" #https or http
+          follow_redirects: true
           hosts:
-            - "localhost:8080"
-#            - "192.168.200.209:9243"
-#            - "192.168.200.210:9243"
-#            - "192.168.200.211:9243"
+            - "192.168.3.185:9200"
+#            - "infinilabs.com:443"
+#            - "www.infinilabs.com:443"
   - name: request_logging
     filter:
       - logging:
@@ -50,11 +50,10 @@ elasticsearch:
   - name: logging-server
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
-#      - https://d6794e84d46e4b7db21d364de10620c4.192.168.200.209.ip.es.io:9243
+      - $[[ES_ENDPOINT]]
     basic_auth:
-      username: elastic
-      password: password
+      username: $[[ES_USER]]
+      password: $[[ES_PASS]]
     discovery:
       enabled: false
 

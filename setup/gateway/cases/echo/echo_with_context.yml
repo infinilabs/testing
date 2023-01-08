@@ -21,3 +21,6 @@ flow:
 router:
   - name: my_router
     default_flow: hello_world
+
+
+#  [01-08 12:04:43] [WRN] [echo.go:98] request throttled: GET,127.0.0.1

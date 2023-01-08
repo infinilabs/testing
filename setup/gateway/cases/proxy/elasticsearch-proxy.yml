@@ -10,7 +10,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[GW_BINDING]]
 
 flow:
   - name: es-flow
@@ -35,10 +35,10 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-     - http://192.168.3.188:9206
+     - $[[ES_ENDPOINT]]
     basic_auth:
-      username: elastic
-      password: password
+      username: $[[ES_USER]]
+      password: $[[ES_PASS]]
     discovery:
       enabled: true
       refresh:

@@ -17,9 +17,11 @@ flow:
 router:
   - name: my_router
     default_flow: hello_world
-    permitted_client_ip_list:
-      - 133.37.55.22
-      - 127.0.0.1
-#    denied_client_ip_list:
-#      - 133.37.55.22
-#      - 127.0.0.1
+    ip_access_control:
+      enabled: true
+      client_ip:
+        permitted:
+        - 192.168.3.181
+#        - 127.0.0.1
+#        denied:
+#        - 192.168.3.5
