@@ -1,0 +1,100 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: test_entry
+    enabled: true
+    router: default
+    max_concurrency: 20000
+    network:
+      binding: 0.0.0.0:8000
+
+router:
+  - name: default
+    default_flow: write_flow
+    rules:
+      - method:
+          - "GET"
+          - "HEAD"
+        pattern:
+          - "/{any:*}"
+        flow:
+          - read_flow
+      - method:
+          - "*"
+        pattern:
+          - "/_cat"
+          - "/_sql"
+          - "/_cluster"
+          - "/_refresh"
+          - "/_count"
+          - "/_search"
+          - "/_msearch"
+          - "/_mget"
+          - "/{any_index}/_eql/search"
+          - "/{any_index}/_count"
+          - "/{any_index}/_search"
+          - "/{any_index}/_msearch"
+          - "/{any_index}/_mget"
+        flow:
+          - read_flow
+
+flow:
+  - name: forward_to_es
+    filter:
+      - elasticsearch:
+          elasticsearch: es-server
+  - name: read_flow
+    filter:
+      - flow:
+          flows:
+            - limit_read_tps
+            - limit_body_size
+            - forward_to_es
+  - name: write_flow
+    filter:
+      - flow:
+          flows:
+            - limit_write_tps
+            - limit_body_size
+            - forward_to_es
+  - name: limit_body_size
+    filter:
+      - if:
+         range:
+           _ctx.request.body_length:
+             gte: 3
+        then:
+          - set_response:
+              body: '{"message":"request body is too large."}'
+              status: 400
+          - drop:
+  - name: limit_write_tps
+    filter:
+      - request_client_ip_limiter:
+          max_requests: 1 #1 req/s
+          status: 429
+          message: '{"message":"[write] request too frequently."}'
+          action: drop
+  - name: limit_read_tps
+    filter:
+      - request_client_ip_limiter:
+          max_requests: 1 #1 req/s
+          status: 429
+          message: '{"message":"[read] request too frequently."}'
+          action: drop
+
+
+elasticsearch:
+  - name: es-server
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9206
+
+# TESTING
+#  curl localhost:8000/_cat/indices
+#  curl localhost:8000/
+#  curl-json -XPOST  localhost:8000/_search'
+#  curl-json -XPOST  localhost:8000/_search -d'{"query":{}}'
+#  curl-json -XPOST  localhost:8000/doc/_doc/ -v -d '{}'
+#  curl-json -XPOST  localhost:8000/doc/_doc/ -v -d '{"a":1}'

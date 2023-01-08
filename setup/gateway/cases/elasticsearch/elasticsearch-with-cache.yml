@@ -1,0 +1,50 @@
+path.data: data
+path.logs: log
+
+stats:
+  enabled: false
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 10000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: es-flow
+    filter:
+      - elasticsearch:
+          elasticsearch: es-server
+  - name: es-cache-flow
+    filter:
+      - get_cache:
+      - elasticsearch:
+          elasticsearch: es-server
+      - set_cache:
+
+router:
+  - name: my_router
+    default_flow: es-flow
+    rules:
+      - method:
+          - "GET"
+          - "HEAD"
+        pattern:
+          - "/"
+          - "/_search"
+          - "/{any_index}/_search"
+        flow:
+          - es-cache-flow
+
+elasticsearch:
+  - name: es-server
+    enabled: true
+    endpoints:
+     - http://localhost:9200
+
+#curl localhost:8000/abcd/_search -v
+#curl "localhost:8000/abcd/_search?no_cache=true" -v
+#curl "localhost:8000/abcd/_search?no_cache=false" -v
+#curl "localhost:8000/abcd/_search?no_cache=true&size=1" -v

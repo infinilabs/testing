@@ -1,0 +1,43 @@
+statsd:
+  enabled: false
+  host: 192.168.3.98
+  port: 8125
+  namespace: loadgen.
+variables:
+  - name: ip
+    type: file
+    path: dict/ip.txt
+  - name: id
+    type: sequence
+  - name: uuid
+    type: uuid
+  - name: now_local
+    type: now_local
+  - name: now_utc
+    type: now_utc
+  - name: now_unix
+    type: now_unix
+  - name: now_with_format
+    type: now_with_format #https://programming.guide/go/format-parse-string-time-date-example.html
+    format: "2006-01-02T15:04:05-0700" #2006-01-02T15:04:05
+  - name: suffix
+    type: range
+    from: 50
+    to: 50
+  - name: bool
+    type: range
+    from: 0
+    to: 1
+requests:
+  - request:
+      method: POST
+      runtime_variables:
+        batch_no: uuid
+      runtime_body_line_variables:
+        routing_no: uuid
+      basic_auth:
+        username: ingest
+        password: password
+      url: http://127.0.0.1:8000/_bulk
+      body_repeat_times: 1
+      body: "{ \"create\" : { \"_index\" : \"ab-test-$[[suffix]]\",\"_type\":\"_doc\", \"_id\" : \"$[[id]]\" , \"routing\" : \"$[[routing_no]]\" } }\n{ \"id\" : \"$[[uuid]]\",\"routing_no\" : \"$[[routing_no]]\",\"batch_number\" : \"$[[batch_no]]\", \"random_no\" : \"$[[suffix]]\",\"ip\" : \"$[[ip]]\",\"now_local\" : \"$[[now_local]]\",\"now_with_format\" : \"$[[now_with_format]]\",\"now_unix\" : \"$[[now_unix]]\" }\n"

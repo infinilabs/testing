@@ -1,0 +1,167 @@
+configs.auto_reload: true
+path.data: data-front
+path.logs: log-front
+
+api:
+  enabled: true
+  network:
+    binding: 0.0.0.0:2900
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 50000
+    network:
+      binding: :9243
+    # tls:
+    #   enabled: true
+    #   cert_file: /home/deployer/gateway/cert/2022/elasticsearch.domain.cn.pem
+    #   key_file: /home/deployer/gateway/cert/2022/elasticsearch.domain.cn.key
+    #   skip_insecure_verify: false
+
+flow:
+  - name: hcy-async-indexing
+    filter:
+      - elasticsearch:
+          elasticsearch: hcy-es 
+      - flow:
+          when:
+            equals:
+              _ctx.response.status: 0
+          flows:
+            - default-flow
+      - drop:
+  - name: bulk_flow
+    filter:
+      - ratio:
+          ratio: 0.5
+          flow: default-flow
+          continue: false
+      - flow:
+          when:
+            and:
+              - contains:
+                  _ctx.request.path: /_bulk
+              - prefix:
+                  _ctx.request.host: uuid
+          flows:
+            - hcy-async-indexing
+      - flow:
+          flows:
+            - default-flow
+  - name: default-flow
+    filter:
+      - http:
+          schema: "http" #https or http
+          max_idle_conn_duration: "900s"
+          skip_failure_host: false
+          hosts:
+            - "192.168.3.185:9200"
+            # - "10.169.172.52:9243"
+            # - "10.169.172.53:9243"
+  - name: request_logging
+    filter:
+      - logging:
+          queue_name: request_logging
+          max_request_body_size: 4096
+          max_response_body_size: 4096
+          #when: #>1s or none-200 requests will be logged
+          # or:
+          #   - not:
+          #       or:
+          #         - equals:
+          #             _ctx.request.path: "/favicon.ico"
+          #         - in:
+          #             _ctx.response.status: [404,200,201]
+          #         - in:
+          #             _ctx.request.path: ["/sw.js"]
+          #   - range:
+          #       _ctx.elapsed.gte: 1000
+router:
+  - name: my_router
+    default_flow: default-flow
+    tracing_flow: request_logging
+    rules:
+      - method:
+          - "*"
+        pattern:
+          - "/_bulk"
+          - "/{any_index}/_bulk"
+        flow:
+          - bulk_flow
+          
+elasticsearch:
+  - name: logging-server
+    enabled: true
+    endpoints:
+      - http://localhost:9201
+    basic_auth:
+      username: elastic
+      password: password
+    discovery:
+      enabled: false
+  - name: hcy-es
+    enabled: true
+    endpoints:
+      - http://uuid.elasticsearch.domain.a:8007
+    basic_auth:
+      username: elastic
+      password: password
+    discovery:
+      enabled: false
+
+pipeline:
+  - name: metrics_ingest
+    auto_start: true
+    keep_running: true
+    retry_delay_in_ms: 1000
+    processor:
+      - json_indexing:
+          index_name: ".infini_metrics"
+          elasticsearch: "logging-server"
+          input_queue: "metrics"
+          idle_timeout_in_seconds: 1
+          worker_size: 1
+          bulk_size_in_mb: 10 #in MB
+          when:
+            cluster_available: [ "logging-server" ]
+  - name: indexing_merge
+    auto_start: true
+    keep_running: true
+    processor:
+      - indexing_merge:
+          input_queue: "request_logging"
+          elasticsearch: "logging-server"
+          index_name: ".infini_requests_logging"
+          output_queue:
+            name: "gateway_requests"
+            label:
+              tag: "request_logging"
+          worker_size: 1
+          bulk_size_in_mb: 10
+  - name: logging_requests
+    auto_start: true
+    keep_running: true
+    processor:
+      - bulk_indexing:
+          bulk:
+            compress: true
+            batch_size_in_mb: 10
+            batch_size_in_docs: 5000
+            bulk_result_message_queue: ""
+          consumer:
+            fetch_max_messages: 100
+          queues:
+            type: indexing_merge
+          when:
+            cluster_available: [ "logging-server" ]
+
+metrics:
+  enabled: true
+  queue: metrics
+  instance:
+    enabled: true
+  network:
+    enabled: true
+    summary: true

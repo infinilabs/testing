@@ -1,0 +1,138 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: test_entry
+    enabled: true
+    router: default
+    max_concurrency: 20000
+    network:
+      binding: 0.0.0.0:8000
+
+router:
+  - name: default
+    default_flow: test
+    tracing_flow: request_logging
+    rules:
+      - method:
+          - "*"
+        pattern:
+          - "/_search"
+          - "/{any_index}/_search"
+        flow:
+          - test
+
+flow:
+  - name: request_logging
+    filter:
+      - logging:
+          queue_name: request_logging
+          max_request_body_size: 10240
+          max_response_body_size: 10240
+  - name: test
+    filter:
+      - dump:
+          request: true
+      - javascript:
+          params:
+            rewriteRoutingThrottleSize: 5
+          source: >
+            var console = require('console');
+            var params = {rewriteRoutingThrottleSize: []};
+            function register(scriptParams) {
+                params = scriptParams;
+            }
+
+            function process(event) {
+              var routing = event.Get("_ctx.request.query_args.routing");
+              if (routing!=undefined && routing.length>params.rewriteRoutingThrottleSize){
+                 console.log("found big routing: "+routing);
+                 event.Put("_ctx.response.header.ROUTING_SIZE",routing.length);
+
+                if (event.Get("_ctx.request.body_length") > 0){
+
+                   var previousBody = event.Get("_ctx.request.body");
+
+                   if (previousBody!=undefined){
+
+                     //remove newline
+                     previousBody = previousBody.replace(/[\r\n]/gm, '');
+
+                     var newBody="";
+                     var meta={};
+                     meta.routing=routing;
+                     newBody+=JSON.stringify(meta);
+                     newBody+="\n"
+
+
+                     newBody+=previousBody;
+
+                     var path=event.Get("_ctx.request.path");
+                     var newPath=path.replace("/_search", "/_msearch");
+
+                     console.log(path+" -> "+ newPath);
+
+                     event.Put("_ctx.request.path",newPath);
+                     event.Put("_ctx.request.body",newBody);
+
+                     console.log(event.Get("_ctx.request.body"));
+
+                   }
+                }
+
+                 //clear routing
+                  event.Put("_ctx.request.query_args.routing","");
+
+
+              }
+
+            }
+      - dump:
+          request: true
+          context:
+            - _ctx.request.query_args.routing
+            - _ctx.request.path
+      - http:
+          schema: "http"
+          hosts:
+            - "localhost:8088"
+
+elasticsearch:
+  - name: logging-server
+    enabled: true
+    endpoints:
+      - http://localhost:9200
+pipeline:
+  - name: indexing_merge
+    auto_start: true
+    keep_running: true
+    processor:
+      - indexing_merge:
+          input_queue: "request_logging"
+          elasticsearch: "logging-server"
+          index_name: "infini_gateway_requests"
+          output_queue:
+            name: "gateway_requests"
+            label:
+              tag: "request_logging"
+          worker_size: 1
+          bulk_size_in_mb: 10
+  - name: logging_requests
+    auto_start: true
+    keep_running: true
+    processor:
+      - bulk_indexing:
+          bulk:
+            compress: true
+            batch_size_in_mb: 10
+            batch_size_in_docs: 5000
+          consumer:
+            fetch_max_messages: 100
+          queues:
+            type: indexing_merge
+          when:
+            cluster_available: [ "logging-server" ]
+
+
+# Purpose of this example:
+# 

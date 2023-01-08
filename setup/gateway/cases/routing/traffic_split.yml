@@ -1,0 +1,34 @@
+flow:
+  - name: primary-flow
+    filter:
+      - http:
+          schema: "http"
+          hosts:
+            - "localhost:8080"
+  - name: secondary-flow
+    filter:
+      - http:
+          schema: "http"
+          hosts:
+            - "localhost:8081"
+  - name: ratio_traffic_split-flow
+    filter:
+      - ratio:
+          ratio: 0.4 # 40% of traffics will go to localhost:8081
+          flow: secondary-flow
+          continue: false
+      - flow:
+          flow: primary-flow
+entry:
+  - name: my_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 10000
+    network:
+      binding: 0.0.0.0:8000
+router:
+  - name: my_router
+    default_flow: ratio_traffic_split-flow
+
+#  ./bin/echo_server -port 8080 -debug
+#  ./bin/echo_server -port 8081 -debug

@@ -1,0 +1,47 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: echo
+    filter:
+      - set_response:
+          status: 201
+          content_type: "text/plain; charset=utf-8"
+          body: "hello world"
+      - set_response_header:
+          headers:
+            - Env -> Dev
+      - dump:
+          context:
+            - _ctx.id
+            - _ctx.tls
+            - _ctx.remote_ip
+            - _ctx.remote_addr
+            - _ctx.local_ip
+            - _ctx.local_addr
+            - _ctx.request.host
+            - _ctx.request.method
+            - _ctx.request.uri
+            - _ctx.request.path
+            - _ctx.request.body
+            - _ctx.request.body_length
+            - _ctx.request.query_args.from
+            - _ctx.request.query_args.size
+            - _ctx.request.header.Accept
+            - _ctx.request.user
+            - _ctx.response.status
+            - _ctx.response.body
+            - _ctx.response.content_type
+            - _ctx.response.body_length
+            - _ctx.response.header.Env
+router:
+  - name: my_router
+    default_flow: echo

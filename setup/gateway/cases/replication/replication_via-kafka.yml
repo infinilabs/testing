@@ -1,0 +1,88 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 10000
+    network:
+      binding: 0.0.0.0:8000
+    tls:
+      enabled: false
+
+flow:
+  - name: primary-read-flow
+    filter:
+      - if:
+          cluster_available: ["primary"]
+        then:
+          - elasticsearch:
+              elasticsearch: "primary"
+              refresh:
+                enabled: true
+                interval: 30s
+        else:
+          - elasticsearch:
+              elasticsearch: "backup"
+              refresh:
+                enabled: true
+                interval: 30s
+
+  - name: primary-write-flow
+    filter:
+#      - kafka:
+#          topic: "gateway_requests"
+#          batch_size: 1
+#          brokers:
+##            - "192.168.3.23:9092"
+#            - "192.168.3.188:9092"
+#      - queue:
+#          queue_name: "primary-writes"
+      - elasticsearch:
+          elasticsearch: "primary"
+          max_connection_per_node: 1000
+          max_retry_times: 0
+          refresh:
+            enabled: true
+            interval: 30s
+
+router:
+  - name: my_router
+    default_flow: primary-write-flow
+    rules:
+      - method:
+          - "GET"
+          - "HEAD"
+        pattern:
+          - "/{any:*}"
+        flow:
+          - primary-read-flow
+      - method:
+          - "*"
+        pattern:
+          - "/_cat"
+          - "/_sql"
+          - "/_cluster"
+          - "/_refresh"
+          - "/_count"
+          - "/_search"
+          - "/_msearch"
+          - "/_mget"
+          - "/{any_index}/_eql/search"
+          - "/{any_index}/_count"
+          - "/{any_index}/_search"
+          - "/{any_index}/_msearch"
+          - "/{any_index}/_mget"
+        flow:
+          - primary-read-flow
+
+elasticsearch:
+  - name: primary
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9206
+  - name: backup
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9204

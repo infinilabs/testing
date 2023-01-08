@@ -1,0 +1,57 @@
+statsd:
+  enabled: false
+  host: 192.168.3.98
+  port: 8125
+  namespace: loadgen.
+variables:
+  - name: ip
+    type: file
+    path: dict/ip.txt
+  - name: id
+    type: sequence
+  - name: uuid
+    type: uuid
+  - name: now_local
+    type: now_local
+  - name: now_utc
+    type: now_utc
+  - name: now_unix
+    type: now_unix
+  - name: now_with_format
+    type: now_with_format #https://programming.guide/go/format-parse-string-time-date-example.html
+    format: "2006-01-02T15:04:05-0700" #2006-01-02T15:04:05
+  - name: suffix
+    type: range
+    from: 50
+    to: 50
+  - name: bool
+    type: range
+    from: 0
+    to: 1
+requests:
+  - request:
+      method: POST
+      runtime_variables:
+        batch_no: uuid
+      runtime_body_line_variables:
+        routing_no: uuid
+      basic_auth:
+        username: ingest
+        password: password
+      url: http://127.0.0.1:8007/_bulk
+      body_repeat_times: 100
+      body: '{"delete":{"_index":"idx-$[[suffix]]","_id":"$[[uuid]]","routing":"$[[id]]"}}\n{ "create" : { "_index" : "idx-$[[suffix]]", "_id" : "$[[uuid]]"} }\n{ "field" : "value2", "home_location": "41.12,-71.34"}\n{"update":{"_index":"idx-$[[suffix]]","_id":"$[[uuid]]","routing":"$[[id]]","retry_on_conflict":3}}\n{"doc":{"address":""}}\n'
+
+#requests:
+#  - request:
+#      method: POST
+#      runtime_variables:
+#        batch_no: id
+#      runtime_body_line_variables:
+#        routing_no: uuid
+#      basic_auth:
+#        username: ingest
+#        password: password
+#      url: http://localhost:8000/_bulk
+#      body_repeat_times: 1000
+#      body: "{ \"create\" : { \"_index\" : \"idx-xx-img-425\",\"_type\":\"_doc\", \"_id\" : \"$[[uuid]]\" , \"routing\" : \"$[[routing_no]]\" } }\n{ \"ownerNDUserID\" : \"0011WsjCK0oV\", \"serviceType\" : $[[bool]], \"tagData\" : \"\", \"contDesc\" : \"\", \"ownerAccounttype\" : \"$[[bool]]\", \"presentLURL\" : \"\", \"contSuffix\" : \"jpg\", \"uploaderBmpUserID\" : \"$[[id]]\", \"ownerAccount\" : \"$[[routing_no]]\", \"presentURL\" : \"\", \"duration\" : 0, \"path\" : \"00019700101000000001/\", \"crtTm\" : \"$[[id]]\", \"parentCatalogID\" : \"xx\", \"smallThumbnail\" : \"http://download.xx.xx.xx.cn:80/x/x/x?root=/mnt/wfs133&fileid=x.jpg&ct=1&type=0&code=x&exp=315&account=x=&p=0&ui=x&ci=x&userSiteId=usersite-s&cn=x...&oprChannel=x&dom=D961\", \"uploaderAccount\" : \"$[[routing_no]]\", \"xxfa\" : \"$[[bool]]\", \"fae\" : \"$[[uuid]]\", \"abc\" : \"http://xx.xx.xx.xx.cn:80/xx/xx/xx?root=/mnt/wfs133&fileid=x.jpg&ct=1&type=1&code=x&exp=315&x=x=&p=0&ui=x&ci=x&x=x-s&cn=x...&x=x&x=x\", \"thumbnail\" : \"http://x.x.x.x:80/x/x/x?root=/mnt/x&fileid=x.jpg&ct=1&type=2&code=x&exp=315&account=x=&p=0&ui=x&ci=x&x=x-s&cn=x...&oprChannel=x&dom=D961\", \"address\" : \"\", \"updTm\" : \"$[[now_unix]]\", \"x\" : 3, \"x\" : $[[bool]], \"xxx\" : 10, \"contID\" : \"xx\", \"contSize\" : $[[id]], \"shotTm\" : \"$[[id]]\", \"xx\" : \"xxx.jpg\", \"xxx\" : \"\", \"xx\" : \"$[[id]]\", \"md5\" : \"$[[uuid]]\" }\n"

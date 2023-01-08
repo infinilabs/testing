@@ -1,0 +1,39 @@
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: default_flow
+    filter:
+      - context_filter: #try admin
+          context: _ctx.request.header.Authorization
+          action: redirect_flow
+          exclude:
+            - "Basic ZWxhc3RpYzowRThRbG5OcHMzNjJxQWY3SjEzSDE1REI="
+          flow: admin_flow
+      #go rest flow
+      - echo:
+          message: "access denied"
+      - set_response:
+          status: 403
+          content_type: application/json
+          body: '{"message":"access denied"}'
+  - name: admin_flow
+    filter:
+      - echo:
+          message: "hello admin"
+  - name: readonly_flow
+    filter:
+      - echo:
+          message: "hello readonly"
+router:
+  - name: my_router
+    default_flow: default_flow
+
+#curl -u "elastic:0E8QlnNps362qAf7J13H15DB" http://localhost:8000     #go admin
+#curl -u "other-user:pass" http://localhost:8000    #403
+#curl  http://localhost:8000                        #403

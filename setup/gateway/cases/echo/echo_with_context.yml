@@ -1,0 +1,23 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: hello_world
+    filter:
+      - echo:
+          message: "request throttled: $[[_ctx.request.method]],$[[_ctx.remote_ip]]"
+          response: false
+          stdout: false
+          logging: true
+          logging_level: "warn" #debug,info,warn,error
+router:
+  - name: my_router
+    default_flow: hello_world

@@ -1,0 +1,68 @@
+entry:
+  - name: test_entry
+    enabled: true
+    router: default
+    max_concurrency: 20000
+    network:
+      binding: 0.0.0.0:8000
+
+router:
+  - name: default
+    default_flow: test
+
+flow:
+  - name: test
+    filter:
+      - bulk_request_throttle:
+          indices:
+            test:
+              max_requests: 5
+              action: drop
+              message: "test writing too fast。"
+              log_warn_message: true
+            test1:
+#              max_requests: 10
+              max_bytes: 512
+              action: drop
+              message: "test1 writing too fast。"
+              log_warn_message: true
+            filebeat-*:
+              max_bytes: 512
+              action: drop
+              message: "filebeat indices writing too fast。"
+              log_warn_message: true
+      - elasticsearch:
+          elasticsearch: test_cluster
+      - dump:
+          context:
+            - _ctx.response.body_json.responses.[0].status
+            - _ctx.response.body_json.responses.[0].took
+            - _ctx.response.body_json.responses.[1].status
+          when:
+            contains:
+              _ctx.request.path: /_msearch
+elasticsearch:
+  - name: test_cluster
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9299
+    discovery:
+      enabled: false
+
+#
+#  POST _bulk
+#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
+#  { "field1" : "value3" }
+#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
+#  { "field1" : "value3" }
+#  { "index" : { "_index" : "test1", "_id" : "1", "_type" : "_doc" } }
+#  { "field1" : "value1" }
+#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
+#  { "field1" : "value3" }
+
+#
+#  GET test/_msearch
+#  { }
+#  {"query" : {"match" : { "message": "this is a test"}}}
+#  {"index": "test4"}
+#  {"query" : {"match_all" : {}}}

@@ -1,0 +1,7 @@
+#Where Testing Starts
+
+tests:
+  - name: testing1
+    setup:
+      - loadgen: ../setup/loadgen/cases/bulk/loadgen.yml
+      - gateway: ../setup/gateway/cases/echo/hello_world.yml
