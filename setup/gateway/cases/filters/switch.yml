@@ -1,0 +1,43 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: es1-flow
+    filter:
+      - echo:
+          message: "response from es1"
+  - name: es2-flow
+    filter:
+      - echo:
+          message: "response from es2"
+  - name: cross_cluster_search
+    filter:
+      - switch:
+          path_rules:
+            - prefix: "es1:"
+              flow: es1-flow
+            - prefix: "es2:"
+              flow: es2-flow
+      - echo:
+          message: "response from default es"
+
+router:
+  - name: my_router
+    default_flow: cross_cluster_search
+
+#  curl localhost:8000/es1:index/_search
+#  response: response from es1
+
+#  curl localhost:8000/es2:index/_search
+#  response: response from es2
+
+#  curl localhost:8000/es5:index/_search
+#  response: response from default es

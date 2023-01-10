@@ -1,0 +1,26 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_body_regex_replace:
+          pattern: '"size": 10000'
+          to: '"size": 100'
+      - dump:
+          request: true
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000/user/search -H 'Content-Type: application/json' -d '{"query":{"bool":{"must":[{"range":{"age":{"gte":10,"lte":20}}}]}},"size":10000}'
+#  response:

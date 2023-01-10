@@ -1,0 +1,32 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - ldap_auth:
+          host: "ldap.forumsys.com"
+          port: 389
+          bind_dn: "cn=read-only-admin,dc=example,dc=com"
+          bind_password: "password"
+          base_dn: "dc=example,dc=com"
+          user_filter: "(uid=%s)"
+      - echo:
+          message: "hello world"
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000 -u tesla:password
+#  response: hello world
+
+#  curl localhost:8000 -u tesla:password1
+#  response: Unauthorized

@@ -1,0 +1,69 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_path_filter:
+          message: "request not allowed."
+          status: 403
+          must: #must match all rules to continue
+            prefix:
+              - /medcl
+            contain:
+              - _search
+            suffix:
+              - _search
+            wildcard:
+              - /*/_search
+            regex:
+              - ^/m[\w]+dcl
+            must_not: # any match will be filtered
+              prefix:
+                - /.kibana
+                - /_security
+                - /_security
+                - /gateway_requests*
+                - /.reporting
+                - /_monitoring/bulk
+              contain:
+                - _refresh
+              suffix:
+                - _count
+                - _refresh
+              wildcard:
+                - /*/_refresh
+              regex:
+                - ^/\.m[\w]+dcl
+            should:
+              prefix:
+                - /medcl
+              contain:
+                - _search
+                - _async_search
+              suffix:
+                - _refresh
+              wildcard:
+                - /*/_refresh
+              regex:
+                - ^/m[\w]+dcl
+      - echo:
+          message: "hello world !"
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000/medcl/_search
+#  response: hello world !
+
+#  curl localhost:8000/x-medcl/_search
+#  response: {"error":true,"message":"request not allowed."}

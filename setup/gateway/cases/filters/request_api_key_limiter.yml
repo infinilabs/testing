@@ -1,0 +1,47 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_api_key_limiter:
+          id:
+            - VuaCfGcBCdbkQm-e5aOx
+          max_requests: 1
+          action: drop # retry or drop
+          message: "your api_key reached our limit"
+      - set_response:
+          status: 200
+          body: 'hello'
+router:
+  - name: my_router
+    default_flow: test
+
+#  ab -n 5 -c 5 -H 'Authorization: ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='  http://localhost:8000/user/_search
+#  Server Software:
+#Server Hostname:        localhost
+#Server Port:            8000
+#
+#Document Path:          /user/_search
+#Document Length:        5 bytes
+#
+#Concurrency Level:      5
+#Time taken for tests:   0.001 seconds
+#Complete requests:      5
+#Failed requests:        4
+#   (Connect: 0, Receive: 0, Length: 4, Exceptions: 0)
+#Non-2xx responses:      4
+#Total transferred:      749 bytes
+#HTML transferred:       125 bytes
+#Requests per second:    3698.22 [#/sec] (mean)
+#Time per request:       1.352 [ms] (mean)
+#Time per request:       0.270 [ms] (mean, across all concurrent requests)
+#Transfer rate:          541.01 [Kbytes/sec] received

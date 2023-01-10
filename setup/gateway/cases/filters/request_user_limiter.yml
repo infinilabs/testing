@@ -1,0 +1,51 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_user_limiter:
+          user:
+            - elastic
+            - medcl
+          max_requests: 256
+          #          max_bytes: 102400 #100k
+          action: drop # retry or drop
+          #          max_retry_times: 1000
+          #          retry_interval: 500 #100ms
+          message: "you reached our limit"
+      - set_response:
+          status: 200
+          body: 'hello'
+router:
+  - name: my_router
+    default_flow: test
+
+#  ab -n 500 -c 5 -H 'Authorization: Basic ZWxhc3RpYzp4eHg='  http://localhost:8000/user/_search
+#  Server Software:
+#Server Hostname:        localhost
+#Server Port:            8000
+#
+#Document Path:          /user/_search
+#Document Length:        5 bytes
+#
+#Concurrency Level:      5
+#Time taken for tests:   0.046 seconds
+#Complete requests:      500
+#Failed requests:        233
+#   (Connect: 0, Receive: 0, Length: 233, Exceptions: 0)
+#Non-2xx responses:      233
+#Total transferred:      65291 bytes
+#HTML transferred:       6228 bytes
+#Requests per second:    10758.24 [#/sec] (mean)
+#Time per request:       0.465 [ms] (mean)
+#Time per request:       0.093 [ms] (mean, across all concurrent requests)
+#Transfer rate:          1371.91 [Kbytes/sec] received

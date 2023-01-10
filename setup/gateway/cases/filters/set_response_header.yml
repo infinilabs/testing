@@ -1,0 +1,27 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - set_response_header:
+          headers:
+            - Trial -> true
+            - Department -> Engineering
+      - echo:
+          message: '{"trial": $[[_ctx.response.header.Trial]], "department": "$[[_ctx.response.header.Department]]"}'
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000
+#  response: {"trial": true, "department": "Engineering"}

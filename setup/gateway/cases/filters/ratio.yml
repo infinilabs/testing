@@ -1,0 +1,34 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: ratio_traffic_forward
+    filter:
+      - ratio:
+          ratio: 0.3
+          flow: hello_world
+          continue: false
+      - echo:
+          message: "hello world !"
+  - name: hello_world
+    filter:
+      - echo:
+          message: "hello test !"
+
+router:
+  - name: my_router
+    default_flow: ratio_traffic_forward
+
+#  curl localhost:8000
+#  response: hello world !
+
+#  curl localhost:8000
+#  response: "hello test !"

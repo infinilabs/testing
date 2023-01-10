@@ -1,0 +1,70 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_path_limiter:
+          message: "Hey, You just reached our request limit!"
+          rules:
+            - pattern: "/(?P<index_name>medcl)/_search"
+              max_qps: 3
+              group: index_name
+            - pattern: "/(?P<index_name>.*?)/_search"
+              max_qps: 100
+              group: index_name
+      - set_response:
+          status: 200
+          body: 'hello'
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  ab -n 15 -c 5 -H 'Env: dev' http://localhost:8000/medcl/_search
+#  Server Software:
+#Server Hostname:        localhost
+#Server Port:            8000
+#
+#Document Path:          /medcl/_search
+#Document Length:        5 bytes
+#
+#Concurrency Level:      5
+#Time taken for tests:   0.006 seconds
+#Complete requests:      15
+#Failed requests:        12
+#   (Connect: 0, Receive: 0, Length: 12, Exceptions: 0)
+#Non-2xx responses:      12
+#Total transferred:      2322 bytes
+#HTML transferred:       495 bytes
+#Requests per second:    2320.19 [#/sec] (mean)
+#Time per request:       2.155 [ms] (mean)
+#Time per request:       0.431 [ms] (mean, across all concurrent requests)
+#Transfer rate:          350.75 [Kbytes/sec] received
+
+#  ab -n 15 -c 5 -H 'Env: dev' http://localhost:8000/user/_search
+#  Server Software:
+#Server Hostname:        localhost
+#Server Port:            8000
+#
+#Document Path:          /user/_search
+#Document Length:        5 bytes
+#
+#Concurrency Level:      5
+#Time taken for tests:   0.004 seconds
+#Complete requests:      15
+#Failed requests:        0
+#Total transferred:      1770 bytes
+#HTML transferred:       75 bytes
+#Requests per second:    4062.84 [#/sec] (mean)
+#Time per request:       1.231 [ms] (mean)
+#Time per request:       0.246 [ms] (mean, across all concurrent requests)
+#Transfer rate:          468.18 [Kbytes/sec] received

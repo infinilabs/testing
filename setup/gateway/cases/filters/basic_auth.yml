@@ -1,0 +1,30 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - basic_auth:
+          valid_users:
+            medcl: passwd
+            elastic: abc
+      - echo:
+          message: "hello world"
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000 -u elastic:abc
+#  response: hello world
+
+#  curl localhost:8000 -u elastic:xxx
+#  response: Unauthorized

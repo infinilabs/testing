@@ -1,0 +1,36 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - switch:
+          path_rules:
+            - prefix: "test1"
+              flow: test1-flow
+            - prefix: "test2"
+              flow: test2-flow
+      - echo:
+          message: "hello test"
+  - name: test1-flow
+    filter:
+      - drop:
+  - name: test2-flow
+    filter:
+      - echo:
+          message: "hello test2"
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000/test1
+#  response:

@@ -1,0 +1,32 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_host_filter:
+          include:
+            - domain-test2.com:8000
+          action: deny
+          status: 403
+          message: "request was denied by request host filter"
+      - echo:
+          message: "hello world !"
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl domain-test2.com:8000
+#  response: hello world !
+
+#  curl domain-test4.com:8000
+#  response: {"error":true,"message":"request was denied by request host filter"}

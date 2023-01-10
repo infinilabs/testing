@@ -1,0 +1,26 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - set_request_query_args:
+          args:
+            - size -> 10
+      - echo:
+          message: '{"size": $[[_ctx.request.query_args.size]]}'
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000/user/search?size=10000
+#  response: {"size": 10}

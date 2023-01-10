@@ -1,0 +1,25 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - date_range_precision_tuning:
+          time_precision: 4
+      - echo:
+          message: '{"body": $[[_ctx.request.body]]}'
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl -H 'content-type:application/json' localhost:8000/user/_search -d '{"query":{"range":{"@timestamp":{"gte":"2019-09-26T08:21:12.152Z","lte":"2020-09-26T08:21:12.152Z","format":"strict_date_optional_time"}}'
+#  response: {"body": {"query":{"range":{"@timestamp":{"gte":"2019-09-26T08:21:00.000Z","lte":"2020-09-26T08:21:59.999Z","format":"strict_date_optional_time"}}}

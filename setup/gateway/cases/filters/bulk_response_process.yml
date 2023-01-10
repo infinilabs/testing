@@ -1,0 +1,28 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - elasticsearch:
+            elasticsearch: prod
+      - bulk_response_process:
+          success_queue: "success_queue"
+          tag_on_success: ["commit_message_allowed"]
+
+router:
+  - name: my_router
+    default_flow: test
+
+elasticsearch:
+  - name: prod
+    endpoint: http://localhost:9200
+    enabled: true

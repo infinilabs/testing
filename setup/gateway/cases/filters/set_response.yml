@@ -1,0 +1,25 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - set_response:
+          status: 200
+          content_type: application/json
+          body: '{"message":"hello world"}'
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl localhost:8000
+#  response: {"message":"hello world"}

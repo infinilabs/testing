@@ -1,0 +1,23 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 1024
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  time curl localhost:8000
+#  curl localhost:8000  0.01s user 0.01s system 1% cpu 1.072 total

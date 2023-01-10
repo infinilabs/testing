@@ -1,0 +1,22 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: redirect
+    filter:
+      - redirect:
+          uri: https://infinilabs.com
+
+router:
+  - name: my_router
+    default_flow: redirect
+
+#  curl -L localhost:8000

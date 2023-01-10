@@ -1,0 +1,33 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: double_write
+    filter:
+      - clone:
+          flows:
+            - write_to_region_a
+            - write_to_region_b #last one's response will be output to client
+  - name: write_to_region_a
+    filter:
+      - echo:
+          message: "write to region a"
+  - name: write_to_region_b
+    filter:
+      - echo:
+          message: "write to region b"
+
+router:
+  - name: my_router
+    default_flow: double_write
+
+#  curl localhost:8000
+#  response: write to region b

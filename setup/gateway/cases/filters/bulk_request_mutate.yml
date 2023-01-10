@@ -1,0 +1,44 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - bulk_request_mutate:
+          fix_null_id: true
+          generate_enhanced_id: true
+#          fix_null_type: true
+#          default_type: _doc
+#          default_index: m-index
+          index_rename:
+            "*": index-new
+            test-bulk: test-bulk-new
+            medcl-dr3: index3-new
+#          type_rename:
+#            "*": type-new
+#            type1: type-new
+#            type2: type-new
+#            doc: type-new
+#            doc1: type-new
+      - echo:
+          message: "$[[_ctx.request.body]]"
+router:
+  - name: my_router
+    default_flow: test
+
+#  curl -H 'content-type: application/json' localhost:8000/_bulk -d '{ "index" : { "_index" : "test-bulk" } }
+#{ "ip":"192.168.0.3" ,"now_with_format":"2023-01-08T14:46:17+0800"}
+#{ "delete" : { "_index" : "test-bulk", "_id" : "2" } }
+#'
+
+#  response: { "index" : { "_index" : "test-bulk-new" ,"_id":"cetokrdath20peehpg50-1673235053220970000-0"} }
+#{ "ip":"192.168.0.3" ,"now_with_format":"2023-01-08T14:46:17+0800"}
+#{ "delete" : { "_index" : "test-bulk-new", "_id" : "2" } }

@@ -1,0 +1,48 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: 0.0.0.0:8000
+
+flow:
+  - name: test
+    filter:
+      - request_client_ip_limiter:
+          ip: #only limit for specify ips
+            - 127.0.0.1
+          max_requests: 256
+          #          max_bytes: 102400 #100k
+          action: drop # retry or drop
+          #          max_retry_times: 1000
+          #          retry_interval: 500 #100ms
+          message: "your ip reached our limit"
+
+router:
+  - name: my_router
+    default_flow: test
+
+#  ab -n 500 -c 5 http://localhost:8000/user/_search
+#  Server Software:
+#Server Hostname:        localhost
+#Server Port:            8000
+#
+#Document Path:          /user/_search
+#Document Length:        0 bytes
+#
+#Concurrency Level:      5
+#Time taken for tests:   0.053 seconds
+#Complete requests:      500
+#Failed requests:        231
+#   (Connect: 0, Receive: 0, Length: 231, Exceptions: 0)
+#Non-2xx responses:      500
+#Total transferred:      63006 bytes
+#HTML transferred:       5775 bytes
+#Requests per second:    9468.98 [#/sec] (mean)
+#Time per request:       0.528 [ms] (mean)
+#Time per request:       0.106 [ms] (mean, across all concurrent requests)
+#Transfer rate:          1165.24 [Kbytes/sec] received
