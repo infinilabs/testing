@@ -34,23 +34,23 @@ flow:
       - set_cache:
   - name: rate_limit_flow
     filter:
-      - context_limiter:
-          max_requests: 1
-          action: drop
-          context:
-            - _ctx.request.path
-            - _ctx.request.header.Host
-            - _ctx.request.header.Env
-      - request_host_limiter:
-          action: drop
-          max_requests: 1
-          host:
-            - api.elasticsearch.cn:8000
-            - logging.elasticsearch.cn
-      - request_api_key_filter:
-          message: "API KEY filtered!"
-          exclude:
-            - VuaCfGcBCdbkQm-e5aOx
+#      - context_limiter:
+#          max_requests: 1
+#          action: drop
+#          context:
+#            - _ctx.request.path
+#            - _ctx.request.header.Host
+#            - _ctx.request.header.Env
+#      - request_host_limiter:
+#          action: drop
+#          max_requests: 1
+#          host:
+#            - api.elasticsearch.cn:8000
+#            - logging.elasticsearch.cn
+#      - request_api_key_filter:
+#          message: "API KEY filtered!"
+#          exclude:
+#            - VuaCfGcBCdbkQm-e5aOx
       - request_path_limiter:
           message: "Hey, You just reached our request limit!"
           rules:

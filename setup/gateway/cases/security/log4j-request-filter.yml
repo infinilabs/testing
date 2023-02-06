@@ -17,27 +17,21 @@ flow:
   - name: main_flow
     filter:
       - context_filter:
-          context: _ctx.request.path
-          message: "request not allowed."
+          context: _ctx.request.to_string
           action: redirect_flow
           status: 403
           flow: log4j_matched_flow
           must_not: # any match will be filtered
-            contain:
-              - 'jndi:'
-              - "jndi:ldap:"
-              - "jndi:rmi:"
-      - context_filter:
-          context: _ctx.request.body
-          message: "request not allowed."
-          action: redirect_flow
-          status: 403
-          flow: log4j_matched_flow
-          must_not: # any match will be filtered
+            regex:
+              - \$\{.*?\}
+              - "%24%7B.*?%7D" #urlencode
             contain:
               - "jndi:"
               - "jndi:ldap:"
               - "jndi:rmi:"
+              - "jndi%3A" #urlencode
+              - "jndi%3Aldap%3A" #urlencode
+              - "jndi%3Armi%3A" #urlencode
       - elasticsearch:
           elasticsearch: es-server
   - name: log4j_matched_flow
@@ -50,3 +44,8 @@ elasticsearch:
     enabled: true
     endpoints:
       - http://localhost:9200
+
+#curl 'http://localhost:8000/index1/_search?q=%24%7Bjava%3Aos%7D'
+#curl 'http://localhost:9200/index/_search?q=%24%7Bjava%3Avm%7D'
+#curl 'http://localhost:8000/index/_search?q=%24%7Bjava%3Avm%7D'
+#curl 'http://localhost:8000/index/_search?q=%24%7Bjndi%3Armi%3A%2F%2Flocalhost%3A1099%2Fapi%7D'

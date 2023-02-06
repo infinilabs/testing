@@ -16,6 +16,8 @@ entry:
     enabled: true
     router: my_router
     max_concurrency: 10000
+    read_timeout: "10s"
+    write_timeout: "10s"
     network:
       binding: 0.0.0.0:8001
     tls:
@@ -32,3 +34,5 @@ flow:
 router:
   - name: my_router
     default_flow: default_flow
+
+#  curl https://localhost:8000/ -k -u  medcl:passwd

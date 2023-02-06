@@ -1,0 +1,4 @@
+api:
+  enabled: true
+  network:
+    binding: 0.0.0.0:2900

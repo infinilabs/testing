@@ -1,34 +1,106 @@
-elasticsearch:
-- name: prod
-  enabled: true
-  endpoint: http://localhost:9200
-  basic_auth:
-    username: monitor_user
-    password: monitor_password
+path.data: data
+path.logs: log
 
 entry:
   - name: my_es_entry
     enabled: true
     router: my_router
-    max_concurrency: 10000
+    max_concurrency: 200000
     network:
       binding: 0.0.0.0:8000
 
 flow:
-  - name: default_flow
+  - name: hello_world
     filter:
       - ldap_auth:
-          host: "ldap.forumsys.com"
-          port: 389
-          bind_dn: "cn=read-only-admin,dc=example,dc=com"
-          bind_password: "password"
-          base_dn: "dc=example,dc=com"
-          user_filter: "(uid=%s)"
+          host: "localhost"
+          port: 3893
+          bind_dn: "cn=serviceuser,ou=svcaccts,dc=glauth,dc=com"
+          bind_password: "mysecret"
+          base_dn: "dc=glauth,dc=com"
+          user_filter: "(cn=%s)"
+          group_attribute: "ou"
+          bypass_api_key: true
+          cache_ttl: "10s"
       - set_basic_auth:
-          username: run_as_elastic_user
-          password: run_as_elastic_pass
+          username: elastic
+          password: passwd
       - elasticsearch:
-          elasticsearch: prod
+          elasticsearch: 717
+  - name: request_logging # this flow is used for request logging, refer to `router`'s `tracing_flow`
+    filter:
+      - context_filter:
+          context: _ctx.request.path
+          exclude:
+            - /favicon.ico
+      - logging:
+          queue_name: request_logging
+          remove_authorization: false
+
 router:
   - name: my_router
-    default_flow: default_flow
+    default_flow: hello_world
+    tracing_flow: request_logging
+
+elasticsearch:
+  - name: 717
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9206
+    basic_auth:
+      username: elastic
+      password: passwd
+  - name: logging
+    enabled: true
+    endpoints:
+      - http://192.168.3.188:9206
+    basic_auth:
+      username: elastic
+      password: passwd
+
+
+pipeline:
+  # pipelines for logging
+  - name: consume-request_logging_index-to-backup
+    auto_start: true
+    keep_running: true
+    processor:
+      - json_indexing:
+          index_name: "test-gateway_requests"
+          elasticsearch: "logging"
+          input_queue: "request_logging"
+
+#LDAP Server: https://github.com/glauth/glauth
+#download cfg file: https://github.com/glauth/glauth/raw/master/v2/sample-simple.cfg
+#./glauth64 -c sample-simple.cfg
+#➜  ~ ldapsearch -LLL -H ldap://localhost:3893 -D cn=serviceuser,ou=svcaccts,dc=glauth,dc=com -w mysecret -x -bdc=glauth,dc=com cn=hackers
+#dn: cn=hackers,ou=superheros,ou=users,dc=glauth,dc=com
+#cn: hackers
+#uid: hackers
+#ou: superheros
+#uidNumber: 5001
+#accountStatus: active
+#objectClass: posixAccount
+#objectClass: shadowAccount
+#loginShell: /bin/bash
+#homeDirectory: /home/hackers
+#description: hackers
+#gecos: hackers
+#gidNumber: 5501
+#memberOf: ou=superheros,ou=groups,dc=glauth,dc=com
+#memberOf: ou=vpn,ou=groups,dc=glauth,dc=com
+#shadowExpire: -1
+#shadowFlag: 134538308
+#shadowInactive: -1
+#shadowLastChange: 11000
+#shadowMax: 99999
+#shadowMin: -1
+#shadowWarning: 7
+#employeetype: Intern
+#employeetype: Temp
+#employeenumber: 12345
+#employeenumber: 54321
+
+
+#curl localhost:8000 -u hackers:dogood
+#curl localhost:8000 -u hackers:dogood1
