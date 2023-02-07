@@ -1,0 +1,7 @@
+.DS_Store
+log
+data
+bin
+*.swp
+vendor
+generated_*.go

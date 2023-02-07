@@ -10,7 +10,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[gateway.endpoint]]
 
 flow:
   - name: es-flow
@@ -42,9 +42,4 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-     - http://localhost:9200
-
-#curl localhost:8000/abcd/_search -v
-#curl "localhost:8000/abcd/_search?no_cache=true" -v
-#curl "localhost:8000/abcd/_search?no_cache=false" -v
-#curl "localhost:8000/abcd/_search?no_cache=true&size=1" -v
+     - $[[elasticsearch.endpoint]]
