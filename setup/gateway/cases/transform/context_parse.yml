@@ -1,0 +1,27 @@
+entry:
+  - name: test_entry
+    enabled: true
+    router: default
+    max_concurrency: 20000
+    network:
+      binding: 0.0.0.0:8000
+
+router:
+  - name: default
+    default_flow: default_flow
+
+flow:
+  - name: default_flow
+    filter:
+      - context_parse:
+          context: _ctx.request.path
+          pattern: ^\/.*?\d{4}\.(?P<month>\d{2})\.(?P<day>\d{2}).*?
+          group: "parsed_index"
+      - dump:
+          context:
+            - parsed_index.month
+            - parsed_index.day
+
+#  curl localhost:8000/abd-2023.02.06-abc/_search
+#  ---- DUMPING CONTEXT ----
+#parsed_index.month  :  02
