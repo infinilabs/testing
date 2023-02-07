@@ -91,7 +91,3 @@ pipeline:
             type: indexing_merge
           when:
             cluster_available: ['logging-server']
-#curl localhost:8000/abcd/_search -v
-#curl "localhost:8000/abcd/_search?no_cache=true" -v
-#curl "localhost:8000/abcd/_search?no_cache=false" -v
-#curl "localhost:8000/abcd/_search?no_cache=true&size=1" -v

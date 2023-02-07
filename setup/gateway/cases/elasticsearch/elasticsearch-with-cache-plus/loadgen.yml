@@ -1,0 +1,44 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+requests:
+  - request:
+      method: POST
+      url: http://$[[gateway.endpoint]]/abcd/_doc
+      body: '
+{
+"model": "Porshe",
+"year": 1972,
+"engine": "2.0-liter four-cylinder Macan",
+"horsepower": "252hp",
+"genres": ["Sporty", "Classic"]
+}
+        '
+    response:
+      status: 201
+  - request:
+      method: GET
+      url: http://$[[gateway.endpoint]]/abcd/_search
+    response:
+      status: 200
+  - request:
+      method: GET
+      url: http://$[[gateway.endpoint]]/abcd/_search?no_cache=true
+    response:
+      status: 200
+  - request:
+      method: GET
+      url: http://$[[gateway.endpoint]]/abcd/_search?no_cache=false
+    response:
+      status: 200
+  - request:
+      method: GET
+      url: http://$[[gateway.endpoint]]/abcd/_search?no_cache=true&size=1
+    response:
+      status: 200
+  - request:
+      method: DELETE
+      url: http://$[[gateway.endpoint]]/abcd
+    response:
+      status: 200
