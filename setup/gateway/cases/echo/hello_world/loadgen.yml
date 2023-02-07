@@ -1,0 +1,16 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+requests:
+  - request:
+      method: GET
+      url: http://${{gateway.endpoint}}/
+    assert:
+      and:
+        - equals:
+            # FIXME
+            _res.response.status: 0
+        - equals:
+            _res.response.body_text: 'hello world'

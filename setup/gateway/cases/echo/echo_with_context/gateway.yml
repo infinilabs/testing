@@ -1,0 +1,20 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: ${{gateway.endpoint}}
+
+flow:
+  - name: hello_world
+    filter:
+      - echo:
+          # TODO: add echo template feature
+          message: 'request throttled: '
+router:
+  - name: my_router
+    default_flow: hello_world

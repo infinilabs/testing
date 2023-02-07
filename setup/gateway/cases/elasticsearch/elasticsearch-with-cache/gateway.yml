@@ -10,7 +10,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: $[[gateway.endpoint]]
+      binding: ${{gateway.endpoint}}
 
 flow:
   - name: es-flow
@@ -42,4 +42,4 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-     - $[[elasticsearch.endpoint]]
+     - ${{elasticsearch.endpoint}}
