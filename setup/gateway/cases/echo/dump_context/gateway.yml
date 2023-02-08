@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: ${{gateway.endpoint}}
+      binding: $[[env.LR_GATEWAY_ENDPOINT]]
 
 flow:
   - name: echo
