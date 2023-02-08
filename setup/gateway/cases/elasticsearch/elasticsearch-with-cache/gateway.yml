@@ -10,7 +10,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: $[[env.LR_GATEWAY_ENDPOINT]]
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: es-flow

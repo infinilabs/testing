@@ -6,7 +6,7 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/any/
+      url: http://$[[env.LR_GATEWAY_HOST]]/any/
     assert:
       and:
         - equals:

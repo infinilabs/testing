@@ -6,7 +6,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd/_doc
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_doc
       body: '
 {
 "model": "Porshe",
@@ -20,26 +20,26 @@ requests:
       status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd/_search
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search
     response:
       status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd/_search?no_cache=true
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=true
     response:
       status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd/_search?no_cache=false
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=false
     response:
       status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd/_search?no_cache=true&size=1
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=true&size=1
     response:
       status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_ENDPOINT]]/abcd
+      url: http://$[[env.LR_GATEWAY_HOST]]/abcd
     response:
       status: 200
