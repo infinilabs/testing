@@ -14,7 +14,7 @@ requests:
             # FIXME
             _res.response.status: 0
         - contains:
-            _res.response.body_text: 'request throttled: '
+            _res.response.body: 'request throttled: '
         - not:
             contains:
-              _res.response.body_text: 'hello world'
+              _res.response.body: 'hello world'

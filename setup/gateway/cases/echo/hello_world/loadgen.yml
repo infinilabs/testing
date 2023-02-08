@@ -7,11 +7,11 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/
+      url: http://127.0.0.1:123/
     assert:
       and:
         - equals:
             # FIXME
             _res.response.status: 0
         - equals:
-            _res.response.body_text: 'hello world'
+            _res.response.body: 'hello world'

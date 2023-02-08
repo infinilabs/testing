@@ -13,4 +13,4 @@ requests:
         - equals:
             _res.response.status: 201
         - equals:
-            _res.response.body_text: 'hello world'
+            _res.response.body: 'hello world'
