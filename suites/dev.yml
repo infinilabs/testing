@@ -12,3 +12,4 @@ tests:
   - path: setup/gateway/cases/echo/echo_with_context
   - path: setup/gateway/cases/echo/dump_context
   - path: setup/gateway/cases/common/api
+  - path: setup/gateway/cases/filters/basic_auth
