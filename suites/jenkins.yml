@@ -27,3 +27,4 @@ tests:
   - path: setup/gateway/cases/filters/flow
   - path: setup/gateway/cases/filters/http
   - path: setup/gateway/cases/filters/javascript
+  - path: setup/gateway/cases/filters/queue

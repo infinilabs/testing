@@ -1,23 +1,27 @@
 path.data: data
 path.logs: log
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 entry:
   - name: my_es_entry
     enabled: true
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
     filter:
       - queue:
           queue_name: test_queue
+      - echo:
+          message: 'ok'
 
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000/user/_search
-#  执行 curl 命令之后通过查看 data 目录下相应队列文件中是否记录了这个请求
