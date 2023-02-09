@@ -17,3 +17,4 @@ tests:
   - path: setup/gateway/cases/filters/bulk_reshuffle
   - path: setup/gateway/cases/filters/cache
   - path: setup/gateway/cases/filters/clone
+  - path: setup/gateway/cases/filters/context_filter

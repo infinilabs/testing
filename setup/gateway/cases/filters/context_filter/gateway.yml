@@ -62,9 +62,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000/medcl/_search
-#  response: hello world !
-
-#  curl localhost:8000/x-medcl/_search
-#  response: {"error":true,"message":"request not allowed."}
