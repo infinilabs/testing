@@ -13,8 +13,7 @@ flow:
   - name: hello_world
     filter:
       - echo:
-          # TODO: add echo template feature
-          message: 'request throttled: '
+          message: 'request throttled: $[[_ctx.request.method]],$[[_ctx.remote_ip]]'
 router:
   - name: my_router
     default_flow: hello_world
