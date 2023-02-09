@@ -2,6 +2,7 @@ env:
   LR_ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19201
   LR_GATEWAY_HOST: localhost:18000
   LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/loadgen/cmd/load-runner/bin/gateway
+  LR_GATEWAY_APIHOST: localhost:19000
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/loadgen/cmd/load-runner/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
 tests:
@@ -10,3 +11,4 @@ tests:
   - path: setup/gateway/cases/echo/hello_world
   - path: setup/gateway/cases/echo/echo_with_context
   - path: setup/gateway/cases/echo/dump_context
+  - path: setup/gateway/cases/common/api
