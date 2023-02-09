@@ -20,3 +20,4 @@ tests:
   - path: setup/gateway/cases/filters/context_filter
   - path: setup/gateway/cases/filters/context_limiter
   - path: setup/gateway/cases/filters/drop
+  - path: setup/gateway/cases/filters/dump
