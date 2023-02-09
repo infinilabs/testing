@@ -33,3 +33,4 @@ tests:
   - path: setup/gateway/cases/filters/redirect
   - path: setup/gateway/cases/filters/request_body_json_del
   - path: setup/gateway/cases/filters/request_body_json_set
+  - path: setup/gateway/cases/filters/request_body_regex_replace
