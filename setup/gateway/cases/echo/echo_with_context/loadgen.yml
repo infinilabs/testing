@@ -11,8 +11,7 @@ requests:
     assert:
       and:
         - equals:
-            # FIXME
-            _res.response.status: 0
+            _res.response.status: 200
         - contains:
             _res.response.body: 'request throttled: '
         - not:
