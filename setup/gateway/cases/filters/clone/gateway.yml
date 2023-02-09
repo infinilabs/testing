@@ -7,27 +7,28 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: double_write
     filter:
+      - echo:
+          message: '{}'
       - clone:
           flows:
             - write_to_region_a
-            - write_to_region_b #last one's response will be output to client
+            - write_to_region_b
   - name: write_to_region_a
     filter:
-      - echo:
-          message: "write to region a"
+      - set_context:
+          context:
+            _ctx.response.body_json.region_a: '"ok"'
   - name: write_to_region_b
     filter:
-      - echo:
-          message: "write to region b"
+      - set_context:
+          context:
+            _ctx.response.body_json.region_b: '"ok"'
 
 router:
   - name: my_router
     default_flow: double_write
-
-#  curl localhost:8000
-#  response: write to region b
