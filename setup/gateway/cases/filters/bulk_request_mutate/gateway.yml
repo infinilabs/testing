@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -33,12 +33,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl -H 'content-type: application/json' localhost:8000/_bulk -d '{ "index" : { "_index" : "test-bulk" } }
-#{ "ip":"192.168.0.3" ,"now_with_format":"2023-01-08T14:46:17+0800"}
-#{ "delete" : { "_index" : "test-bulk", "_id" : "2" } }
-#'
-
-#  response: { "index" : { "_index" : "test-bulk-new" ,"_id":"cetokrdath20peehpg50-1673235053220970000-0"} }
-#{ "ip":"192.168.0.3" ,"now_with_format":"2023-01-08T14:46:17+0800"}
-#{ "delete" : { "_index" : "test-bulk-new", "_id" : "2" } }
