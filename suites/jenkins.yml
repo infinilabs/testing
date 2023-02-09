@@ -29,3 +29,4 @@ tests:
   - path: setup/gateway/cases/filters/javascript
   - path: setup/gateway/cases/filters/queue
   - path: setup/gateway/cases/filters/ratio
+  - path: setup/gateway/cases/filters/record
