@@ -19,14 +19,9 @@ flow:
           when:
             contains:
               _ctx.request.path: /_search
-      - dump:
-          request: true
-          context:
-            - _ctx.request.uri
+      - echo:
+          message: '$[[_ctx.request.uri]]'
 
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000/abc/_search
-#  response:

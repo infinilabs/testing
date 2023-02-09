@@ -22,3 +22,4 @@ tests:
   - path: setup/gateway/cases/filters/drop
   - path: setup/gateway/cases/filters/dump
   - path: setup/gateway/cases/filters/echo
+  - path: setup/gateway/cases/filters/context_regex_replace
