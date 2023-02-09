@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -29,6 +29,4 @@ router:
 elasticsearch:
   - name: dev
     enabled: true
-    endpoint: http://localhost:9200
-
-#  curl localhost:8000/test-10/_search -v
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
