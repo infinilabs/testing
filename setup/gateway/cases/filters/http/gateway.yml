@@ -1,13 +1,18 @@
 path.data: data
 path.logs: log
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 entry:
   - name: my_es_entry
     enabled: true
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -19,11 +24,8 @@ flow:
           schema: "http" #https or http
           #host: "192.168.3.98:5601"
           hosts:
-            - "192.168.3.9:2900"
-            - "192.168.3.185:2900"
+            - "$[[env.LR_GATEWAY_API_HOST]]"
 
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000

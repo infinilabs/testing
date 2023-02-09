@@ -1,0 +1,19 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/health
+      basic_auth:
+        username: medcl
+        password: passwd
+    assert:
+      and:
+        - has_fields:
+          - _res.response.body_json.status
+        - equals:
+            _res.response.status: 200
