@@ -1,0 +1,16 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/
+    assert:
+      or:
+        equals:
+          _res.response.body: 'hello world !'
+        equals:
+          _res.response.body: 'hello test !'

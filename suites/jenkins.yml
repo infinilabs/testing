@@ -28,3 +28,4 @@ tests:
   - path: setup/gateway/cases/filters/http
   - path: setup/gateway/cases/filters/javascript
   - path: setup/gateway/cases/filters/queue
+  - path: setup/gateway/cases/filters/ratio
