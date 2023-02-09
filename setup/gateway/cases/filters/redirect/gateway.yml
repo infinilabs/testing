@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: redirect
@@ -18,5 +18,3 @@ flow:
 router:
   - name: my_router
     default_flow: redirect
-
-#  curl -L localhost:8000

@@ -30,3 +30,4 @@ tests:
   - path: setup/gateway/cases/filters/queue
   - path: setup/gateway/cases/filters/ratio
   - path: setup/gateway/cases/filters/record
+  - path: setup/gateway/cases/filters/redirect
