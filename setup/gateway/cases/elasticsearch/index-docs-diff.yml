@@ -50,8 +50,8 @@ pipeline:
               source_queue: 'source_docs'
               target_queue: 'target_docs'
 
-#pipeline:
 #  - name: diff_result_ingest
+#    auto_start: true
 #    processor:
 #      - json_indexing:
 #          index_name: "diff_result"
