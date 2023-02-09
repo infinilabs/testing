@@ -31,6 +31,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000/test1
-#  response:
