@@ -24,3 +24,4 @@ tests:
   - path: setup/gateway/cases/filters/echo
   - path: setup/gateway/cases/filters/context_regex_replace
   - path: setup/gateway/cases/filters/date_range_precision_tuning
+  - path: setup/gateway/cases/filters/flow
