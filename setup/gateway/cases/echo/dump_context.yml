@@ -21,6 +21,13 @@ flow:
             - Env -> Dev
       - dump:
           context:
+            - _sys.month_of_now
+            - _sys.weekday_of_now
+            - _sys.day_of_now
+            - _sys.hour_of_now
+            - _sys.minute_of_now
+            - _sys.second_of_now
+            - _sys.hostname
             - _ctx.id
             - _ctx.tls
             - _ctx.remote_ip
