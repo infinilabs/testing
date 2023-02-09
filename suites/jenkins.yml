@@ -26,3 +26,4 @@ tests:
   - path: setup/gateway/cases/filters/date_range_precision_tuning
   - path: setup/gateway/cases/filters/flow
   - path: setup/gateway/cases/filters/http
+  - path: setup/gateway/cases/filters/javascript
