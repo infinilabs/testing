@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -43,7 +43,7 @@ elastic:
 
 elasticsearch:
   - name: prod
-    endpoint: http://localhost:9200
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     enabled: true
     discovery:
       enabled: true
@@ -55,14 +55,7 @@ pipeline:
     auto_start: true
     processor:
       - bulk_indexing:
-          bulk_size_in_mb: 10  #in MB
+          batch_size_in_docs: 1
           queues:
             type: bulk_reshuffle
             level: node
-
-#  curl localhost:8000/_bulk -d `{ "index" : { "_index" : "test-bulk", "_id" : "1" } }
-#              { "ip":"192.168.0.2" ,"now_with_format":"2023-01-08T14:46:17+0800"}
-#            { "index" : { "_index" : "test-bulk", "_id" : "2" } }
-#            { "ip":"192.168.0.4" ,"now_with_format":"2023-01-08T14:46:17+0800"}
-#            `
-#  response: {"took":1675,"errors":false,"items":[{"index":{"_index":"test-bulk","_type":"_doc","_id":"1","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":0,"_primary_term":1,"status":201}},{"index":{"_index":"test-bulk","_type":"_doc","_id":"2","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":1,"_primary_term":1,"status":201}}]}

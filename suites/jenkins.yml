@@ -14,3 +14,4 @@ tests:
   - path: setup/gateway/cases/common/api
   - path: setup/gateway/cases/filters/basic_auth
   - path: setup/gateway/cases/filters/bulk_request_mutate
+  - path: setup/gateway/cases/filters/bulk_reshuffle
