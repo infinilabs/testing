@@ -45,3 +45,4 @@ tests:
   - path: setup/gateway/cases/filters/response_body_regex_replace
   - path: setup/gateway/cases/filters/response_header_filter
   - path: setup/gateway/cases/filters/response_header_format
+  - path: setup/gateway/cases/filters/response_status_filter
