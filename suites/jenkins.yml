@@ -41,3 +41,4 @@ tests:
   - path: setup/gateway/cases/filters/request_path_filter
   - path: setup/gateway/cases/filters/request_path_limiter
   - path: setup/gateway/cases/filters/request_user_filter
+  - path: setup/gateway/cases/filters/request_user_limiter
