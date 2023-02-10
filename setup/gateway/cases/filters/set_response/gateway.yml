@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -20,6 +20,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000
-#  response: {"message":"hello world"}
