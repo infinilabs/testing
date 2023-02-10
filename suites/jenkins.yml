@@ -49,3 +49,4 @@ tests:
   - path: setup/gateway/cases/filters/sample
   - path: setup/gateway/cases/filters/set_basic_auth
   - path: setup/gateway/cases/filters/set_context
+  - path: setup/gateway/cases/filters/set_hostname
