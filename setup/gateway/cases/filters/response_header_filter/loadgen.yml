@@ -1,0 +1,14 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+    assert:
+      equals:
+        _res.response.status: 403
+        _res.response.body_json.message: 'request was denied by response header filter'
