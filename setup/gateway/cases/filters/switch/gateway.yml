@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: es1-flow
@@ -32,12 +32,3 @@ flow:
 router:
   - name: my_router
     default_flow: cross_cluster_search
-
-#  curl localhost:8000/es1:index/_search
-#  response: response from es1
-
-#  curl localhost:8000/es2:index/_search
-#  response: response from es2
-
-#  curl localhost:8000/es5:index/_search
-#  response: response from default es

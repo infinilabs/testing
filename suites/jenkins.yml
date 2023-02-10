@@ -53,3 +53,5 @@ tests:
   - path: setup/gateway/cases/filters/set_request_header
   - path: setup/gateway/cases/filters/set_request_query_args
   - path: setup/gateway/cases/filters/set_response
+  - path: setup/gateway/cases/filters/sleep
+  - path: setup/gateway/cases/filters/switch
