@@ -48,3 +48,4 @@ tests:
   - path: setup/gateway/cases/filters/response_status_filter
   - path: setup/gateway/cases/filters/sample
   - path: setup/gateway/cases/filters/set_basic_auth
+  - path: setup/gateway/cases/filters/set_context
