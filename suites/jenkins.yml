@@ -39,3 +39,4 @@ tests:
   - path: setup/gateway/cases/filters/request_header_filter
   - path: setup/gateway/cases/filters/request_method_filter
   - path: setup/gateway/cases/filters/request_path_filter
+  - path: setup/gateway/cases/filters/request_path_limiter
