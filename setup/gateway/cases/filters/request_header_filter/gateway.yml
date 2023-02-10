@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -24,9 +24,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000 -H 'TRACE: true'
-#  response: hello world !
-
-#  curl localhost:8000
-#  response: {"error":true,"message":"request was denied by request header filter"}
