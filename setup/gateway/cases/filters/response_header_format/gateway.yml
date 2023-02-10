@@ -7,18 +7,18 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
     filter:
+      - set_response_header:
+          headers:
+            - INFINI-CACHE -> CACHED
       - response_header_format:
-      - dump:
-          request_header: true
+      - echo:
+          message: 'hello'
 
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000 -H 'X-API-KEY: x675sd90po892eth'
-#  response:
