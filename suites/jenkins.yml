@@ -50,3 +50,4 @@ tests:
   - path: setup/gateway/cases/filters/set_basic_auth
   - path: setup/gateway/cases/filters/set_context
   - path: setup/gateway/cases/filters/set_hostname
+  - path: setup/gateway/cases/filters/set_request_header
