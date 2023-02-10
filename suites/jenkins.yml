@@ -46,3 +46,4 @@ tests:
   - path: setup/gateway/cases/filters/response_header_filter
   - path: setup/gateway/cases/filters/response_header_format
   - path: setup/gateway/cases/filters/response_status_filter
+  - path: setup/gateway/cases/filters/sample

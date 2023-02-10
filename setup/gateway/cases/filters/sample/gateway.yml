@@ -7,19 +7,16 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: sample
     filter:
       - sample:
-          ratio: 0.2
+          ratio: 0
       - echo:
           message: "hello world !"
 
 router:
   - name: my_router
     default_flow: sample
-
-#  curl localhost:8000
-#  response:
