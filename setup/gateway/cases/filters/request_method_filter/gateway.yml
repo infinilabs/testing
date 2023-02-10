@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -29,9 +29,3 @@ flow:
 router:
   - name: my_router
     default_flow: test
-
-#  curl localhost:8000/medcl/_count
-#  response: hello world !
-
-#  curl -XPOST -d '{"field1": "field_value"}' localhost:8000/medcl/_doc/1
-#  response: {"error":true,"message":"request method not allowed"}
