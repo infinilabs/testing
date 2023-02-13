@@ -9,5 +9,6 @@ env:
   LR_MINIO_API_USERNAME: minioadmin
   LR_MINIO_API_PASSWORD: minioadmin
   LR_MINIO_TEST_BUCKET: jenkins-test-data
+  LR_GATEWAY_FLOATING_IP_HOST: 192.168.0.234:8001
 tests:
-  - path: setup/gateway/cases/misc/minio
+  - path: setup/gateway/cases/misc/floating_ip

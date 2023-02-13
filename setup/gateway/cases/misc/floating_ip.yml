@@ -1,5 +1,0 @@
-floating_ip:
-  enabled: true
-  priority: 2234
-  echo_port: 62315
-  forced_by_priority: true

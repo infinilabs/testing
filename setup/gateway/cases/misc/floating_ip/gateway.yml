@@ -1,0 +1,41 @@
+floating_ip:
+  enabled: true
+  priority: 2234
+  echo:
+    port: 62315
+  forced_by_priority: true
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: test
+    filter:
+      - echo:
+          message: 'ok'
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 15000 # the gateway needs to wait >15s to probe ARP
+      - echo:
+          message: 'ok'
+
+router:
+  - name: my_router
+    default_flow: test
+    rules:
+      - method:
+          - GET
+        pattern:
+          - /test
+        flow: test
+      - method:
+          - GET
+        pattern:
+          - /sleep
+        flow: sleep
