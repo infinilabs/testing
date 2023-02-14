@@ -16,7 +16,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
                    sh 'cd /home/jenkins/go/src/infini.sh/loadgen && git fetch && git reset --hard origin/master'
                    sh 'cd /home/jenkins/go/src/infini.sh/gateway && git fetch && git reset --hard origin/master'
-                   sh 'cd /home/jenkins/go/src/infini.sh/testing && git fetch && git reset --hard origin/main'
+                   sh 'cd /home/jenkins/go/src/infini.sh/testing && git fetch && git reset --hard origin/main && git clean -dfx'
 
                    sh label: 'build-load-runner', script: 'cd /home/jenkins/go/src/infini.sh/loadgen/cmd/load-runner && make build && cp ./bin/load-runner /home/jenkins/go/src/infini.sh/testing/bin/'
                    sh label: 'build-gateway', script: 'cd /home/jenkins/go/src/infini.sh/gateway && make build && cp ./bin/gateway /home/jenkins/go/src/infini.sh/testing/bin/'
