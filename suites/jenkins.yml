@@ -63,3 +63,4 @@ tests:
   - path: setup/gateway/cases/misc/minio
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-lookup
