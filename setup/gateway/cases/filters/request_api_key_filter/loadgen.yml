@@ -12,8 +12,8 @@ requests:
         - Authorization: 'ApiKey VuaCfGcBCdbkQm-e5aOx'
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'hello world !'
+        _ctx.response.status: 200
+        _ctx.response.body: 'hello world !'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
@@ -21,5 +21,5 @@ requests:
         - Authorization: 'ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='
     assert:
       equals:
-        _res.response.status: 403
-        _res.response.body_json.message: 'request was denied by request api key filter'
+        _ctx.response.status: 403
+        _ctx.response.body_json.message: 'request was denied by request api key filter'

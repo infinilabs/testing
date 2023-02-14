@@ -11,6 +11,6 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.status: 201
+            _ctx.response.status: 201
         - equals:
-            _res.response.body: 'hello world'
+            _ctx.response.body: 'hello world'

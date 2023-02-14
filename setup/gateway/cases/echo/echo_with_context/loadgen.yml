@@ -11,6 +11,6 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.status: 200
+            _ctx.response.status: 200
         - contains:
-            _res.response.body: 'request throttled: GET,'
+            _ctx.response.body: 'request throttled: GET,'

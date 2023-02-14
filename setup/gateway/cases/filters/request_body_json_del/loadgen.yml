@@ -14,6 +14,6 @@ requests:
       and:
         not:
           has_fields:
-            - _res.response.body_json.query.bool.should
+            - _ctx.response.body_json.query.bool.should
         has_fields:
-          - _res.response.body_json.query.bool.must
+          - _ctx.response.body_json.query.bool.must

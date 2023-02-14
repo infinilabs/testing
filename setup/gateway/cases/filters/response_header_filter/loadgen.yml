@@ -10,5 +10,5 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       equals:
-        _res.response.status: 403
-        _res.response.body_json.message: 'request was denied by response header filter'
+        _ctx.response.status: 403
+        _ctx.response.body_json.message: 'request was denied by response header filter'

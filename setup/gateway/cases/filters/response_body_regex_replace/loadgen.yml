@@ -10,4 +10,4 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       equals:
-        _res.response.body: "hello world\n"
+        _ctx.response.body: "hello world\n"

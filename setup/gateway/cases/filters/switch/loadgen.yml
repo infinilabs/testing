@@ -10,16 +10,16 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/es1:index/_search
     assert:
       equals:
-        _res.response.body: response from es1
+        _ctx.response.body: response from es1
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/es2:index/_search
     assert:
       equals:
-        _res.response.body: response from es2
+        _ctx.response.body: response from es2
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/es5:index/_search
     assert:
       equals:
-        _res.response.body: response from default es
+        _ctx.response.body: response from default es

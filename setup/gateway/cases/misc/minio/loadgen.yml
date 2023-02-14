@@ -11,51 +11,51 @@ requests:
       body: '{"test":"abc"}'
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'ok'
+        _ctx.response.status: 200
+        _ctx.response.body: 'ok'
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/test
       body: '{"test":"abc"}'
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'ok'
+        _ctx.response.status: 200
+        _ctx.response.body: 'ok'
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/test
       body: '{"test":"abc"}'
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'ok'
+        _ctx.response.status: 200
+        _ctx.response.body: 'ok'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/sleep
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'ok'
+        _ctx.response.status: 200
+        _ctx.response.body: 'ok'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/disk_test/stats
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body_json.disk_test.depth: 3
+        _ctx.response.status: 200
+        _ctx.response.body_json.disk_test.depth: 3
     register:
-      - queue_id: _res.response.body_json.disk_test.metadata.id
+      - queue_id: _ctx.response.body_json.disk_test.metadata.id
   - request:
       method: HEAD
       url: http://$[[env.LR_MINIO_API_HOST]]/$[[env.LR_MINIO_TEST_BUCKET]]/cfkr9215k34l5enovsng/queue/$[[queue_id]]/000000000.dat.zstd
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/disk_test
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body_json.acknowledged: true
+        _ctx.response.status: 200
+        _ctx.response.body_json.acknowledged: true
 

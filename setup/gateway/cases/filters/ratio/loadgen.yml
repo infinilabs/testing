@@ -11,6 +11,6 @@ requests:
     assert:
       or:
         equals:
-          _res.response.body: 'hello world !'
+          _ctx.response.body: 'hello world !'
         equals:
-          _res.response.body: 'hello test !'
+          _ctx.response.body: 'hello test !'

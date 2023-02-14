@@ -10,4 +10,4 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       regexp:
-        _res.response.body: '^Basic '
+        _ctx.response.body: '^Basic '

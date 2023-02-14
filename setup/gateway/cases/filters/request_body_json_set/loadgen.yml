@@ -11,6 +11,6 @@ requests:
       body: '{"aggs":{"total_num":{"terms":{"field":"gender","size":10}}}}'
     assert:
       equals:
-        _res.response.body_json.aggs.total_num.terms.field: 'name'
-        _res.response.body_json.aggs.total_num.terms.size: 3
-        _res.response.body_json.size: 0
+        _ctx.response.body_json.aggs.total_num.terms.field: 'name'
+        _ctx.response.body_json.aggs.total_num.terms.size: 3
+        _ctx.response.body_json.size: 0

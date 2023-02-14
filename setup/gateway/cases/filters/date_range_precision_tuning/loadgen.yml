@@ -11,4 +11,4 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/abc/_search
     assert:
       equals:
-        _res.response.body_json.query.range.@timestamp.gte: '2019-09-26T08:21:00.000Z'
+        _ctx.response.body_json.query.range.@timestamp.gte: '2019-09-26T08:21:00.000Z'

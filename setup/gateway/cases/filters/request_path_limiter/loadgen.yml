@@ -10,28 +10,28 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/medcl/_search
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/medcl/_search
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/medcl/_search
     assert:
       equals:
-        _res.response.status: 429
+        _ctx.response.status: 429
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
     assert:
       equals:
-        _res.response.status: 429
+        _ctx.response.status: 429

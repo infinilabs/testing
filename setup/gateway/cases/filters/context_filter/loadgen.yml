@@ -10,13 +10,13 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/medcl/_search
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'hello world !'
+        _ctx.response.status: 200
+        _ctx.response.body: 'hello world !'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/x-medcl/_search
     assert:
       equals:
-        _res.response.status: 403
-        _res.response.body_json.error: true
-        _res.response.body_json.message: 'request not allowed.'
+        _ctx.response.status: 403
+        _ctx.response.body_json.error: true
+        _ctx.response.body_json.message: 'request not allowed.'

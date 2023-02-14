@@ -10,20 +10,20 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: 'ok'
+        _ctx.response.status: 200
+        _ctx.response.body: 'ok'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/test_queue/stats
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body_json.test_queue.depth: 1
+        _ctx.response.status: 200
+        _ctx.response.body_json.test_queue.depth: 1
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/test_queue
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body_json.acknowledged: true
+        _ctx.response.status: 200
+        _ctx.response.body_json.acknowledged: true
 

@@ -12,7 +12,7 @@ requests:
         - Authorization: 'ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
@@ -20,7 +20,7 @@ requests:
         - Authorization: 'ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='
     assert:
       equals:
-        _res.response.status: 429
+        _ctx.response.status: 429
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
@@ -28,13 +28,13 @@ requests:
         - Authorization: 'ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='
     assert:
       equals:
-        _res.response.status: 429
+        _ctx.response.status: 429
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
     assert:
       equals:
-        _res.response.status: 200
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/user/_search
@@ -42,4 +42,4 @@ requests:
         - Authorization: 'ApiKey VnVhQ2ZHY0JDZGJrUW0tZTVhT3g6dWkybHAyYXhUTm1zeWFrdzl0dk5udw=='
     assert:
       equals:
-        _res.response.status: 429
+        _ctx.response.status: 429

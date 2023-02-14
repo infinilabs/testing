@@ -10,4 +10,4 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/abc/_search
     assert:
       equals:
-        _res.response.body: 'http://$[[env.LR_GATEWAY_HOST]]/cluster:abc/_search'
+        _ctx.response.body: 'http://$[[env.LR_GATEWAY_HOST]]/cluster:abc/_search'

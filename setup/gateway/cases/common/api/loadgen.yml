@@ -11,5 +11,5 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.status: 200
-        - has_fields: ['_res.response.body_json.status']
+            _ctx.response.status: 200
+        - has_fields: ['_ctx.response.body_json.status']

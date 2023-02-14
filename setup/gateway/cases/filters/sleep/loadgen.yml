@@ -11,6 +11,6 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.body: hello
+            _ctx.response.body: hello
         - range:
-            _res.elapsed.gte: 1024
+            _ctx.elapsed.gte: 1024

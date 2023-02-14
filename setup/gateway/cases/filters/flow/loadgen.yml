@@ -10,12 +10,12 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       equals:
-        _res.response.status: 200
-        _res.response.body: response from test1
+        _ctx.response.status: 200
+        _ctx.response.body: response from test1
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test2
     assert:
       equals:
-        _res.response.status: 503
-        _res.response.body_json.message: invalid path
+        _ctx.response.status: 503
+        _ctx.response.body_json.message: invalid path

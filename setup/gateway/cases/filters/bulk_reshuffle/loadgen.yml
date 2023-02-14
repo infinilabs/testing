@@ -14,8 +14,8 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.status: 200
-            _res.response.body_json.errors: false
+            _ctx.response.status: 200
+            _ctx.response.body_json.errors: false
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
@@ -25,20 +25,20 @@ requests:
     assert:
       and:
         - equals:
-            _res.response.status: 200
-            _res.response.body_json.errors: false
+            _ctx.response.status: 200
+            _ctx.response.body_json.errors: false
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_doc/1
     assert:
       and:
         - equals:
-            _res.response.status: 200
-            _res.response.body_json._index: test-bulk
+            _ctx.response.status: 200
+            _ctx.response.body_json._index: test-bulk
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk
     assert:
       and:
         - equals:
-            _res.response.status: 200
+            _ctx.response.status: 200

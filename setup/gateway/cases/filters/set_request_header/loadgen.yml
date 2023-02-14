@@ -10,5 +10,5 @@ requests:
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
       equals:
-        _res.response.body_json.trial: true
-        _res.response.body_json.department: Engineering
+        _ctx.response.body_json.trial: true
+        _ctx.response.body_json.department: Engineering
