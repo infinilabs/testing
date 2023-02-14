@@ -64,3 +64,4 @@ tests:
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   - path: setup/gateway/cases/elasticsearch/elasticsearch-lookup
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-route-by-index

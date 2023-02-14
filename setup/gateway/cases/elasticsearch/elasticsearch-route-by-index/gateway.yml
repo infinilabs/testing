@@ -7,7 +7,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: default-flow
@@ -45,15 +45,12 @@ elasticsearch:
   - name: es1-apm
     enabled: true
     endpoints:
-     - http://192.168.3.188:9206
+     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
   - name: es2-erp
     enabled: true
     endpoints:
-     - http://192.168.3.188:9206
+     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
   - name: es3-mall
     enabled: true
     endpoints:
-     - http://192.168.3.188:9299
-
-# curl localhost:8000/apm-sab/_search -v
-# curl localhost:8000/mall-sab/_search -v
+     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
