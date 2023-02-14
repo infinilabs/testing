@@ -8,5 +8,6 @@ env:
   LR_MINIO_API_HOST: 127.0.0.1:9001
   LR_MINIO_API_USERNAME: minioadmin
   LR_MINIO_API_PASSWORD: minioadmin
+  LR_MINIO_TEST_BUCKET: jenkins-test-data
 tests:
   - path: setup/gateway/cases/misc/minio

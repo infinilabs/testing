@@ -8,6 +8,7 @@ env:
   LR_MINIO_API_HOST: 192.168.3.185:19000
   LR_MINIO_API_USERNAME: minioadmin
   LR_MINIO_API_PASSWORD: minioadmin
+  LR_MINIO_TEST_BUCKET: jenkins-test-data
 tests:
   - path: setup/gateway/cases/elasticsearch/elasticsearch-with-cache
   - path: setup/gateway/cases/elasticsearch/elasticsearch-with-cache-plus
