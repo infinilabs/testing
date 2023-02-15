@@ -67,3 +67,5 @@ tests:
   - path: setup/gateway/cases/elasticsearch/elasticsearch-route-by-index
   - path: setup/gateway/cases/elasticsearch/es_migration
   - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
+  # FIXME: need access to es data folder
+  # - path: setup/gateway/cases/elasticsearch/index-backup
