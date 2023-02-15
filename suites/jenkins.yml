@@ -69,3 +69,4 @@ tests:
   - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
   # FIXME: need access to es data folder
   # - path: setup/gateway/cases/elasticsearch/index-backup
+  - path: setup/gateway/cases/elasticsearch/index-docs-diff

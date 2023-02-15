@@ -1,29 +1,65 @@
 path.data: data
 path.logs: log
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 #show progress bar
 #progress_bar.enabled: true
+#
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: test
+    filter:
+      - elasticsearch:
+          elasticsearch: source
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 10000
+      - echo:
+          message: 'ok'
+
+router:
+  - name: my_router
+    default_flow: test
+    rules:
+      - method:
+          - GET
+        pattern:
+          - /sleep
+        flow: sleep
 
 elasticsearch:
   - name: source
     enabled: true
     endpoints:
-      - http://192.168.3.188:9204
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
   - name: target
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
 
 pipeline:
   - name: index_diff_service
-    auto_start: true
+    auto_start: false
+    keep_running: false
     processor:
     - dag:
         mode: wait_all
         parallel:
           - dump_hash: #dump es1's doc
               sort_document_fields: true
-              indices: "test-10"
+              indices: "test-1"
               scroll_time: "10m"
               elasticsearch: "source"
 #              query_string: "_id:c8es70pu46lgfdgmja9g-1646117763293610802-2"
@@ -33,7 +69,7 @@ pipeline:
               slice_size: 1
 #              hash_func: "xxhash64"
           - dump_hash: #dump es2's doc
-              indices: "test-10"
+              indices: "test-2"
               scroll_time: "10m"
 #              fields: "doc_hash"
 #              query_string: "_id:c8es70pu46lgfdgmja9g-1646117763293610802-2"
@@ -46,14 +82,15 @@ pipeline:
           - index_diff:
               diff_queue: "diff_result"
               buffer_size: 10
-              text_report: true #如果要存 es，这个开关关闭，开启 pipeline 的 diff_result_ingest 任务
+              text_report: false #如果要存 es，这个开关关闭，开启 pipeline 的 diff_result_ingest 任务
               source_queue: 'source_docs'
               target_queue: 'target_docs'
+  - name: diff_result_ingest
+    auto_start: true
+    keep_running: true
+    processor:
+      - json_indexing:
+          index_name: "diff_result"
+          elasticsearch: "source"
+          input_queue: "diff_result"
 
-#  - name: diff_result_ingest
-#    auto_start: true
-#    processor:
-#      - json_indexing:
-#          index_name: "diff_result"
-#          elasticsearch: "source"
-#          input_queue: "diff_result"
