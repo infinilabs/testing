@@ -7,25 +7,27 @@ entry:
     router: my_router
     max_concurrency: 1000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: async_bulk
     filter:
-#      - bulk_request_mutate: #修复自动生成 id 的文档，主动生成 id
-#          default_type: _doc
-#          type_rename:
-#            "*": _doc #统一索引的 Type 类型，适合旧版本多 Type 迁移到新版本集群
       - bulk_reshuffle:
-          when:
-            contains:
-              _ctx.request.path: /_bulk
           elasticsearch: prod
           level: cluster
           partition_size: 3
           fix_null_id: true
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 5000
+      - echo:
+          message: ok
+
+  - name: es-flow
+    filter:
       - elasticsearch:
-          elasticsearch: prod  #elasticsearch configure reference name
+          elasticsearch: prod #elasticsearch configure reference name
           max_connection_per_node: 1000 #max tcp connection to upstream, default for all nodes
           max_response_size: -1 #default for all nodes
           timeout: 10
@@ -37,21 +39,30 @@ flow:
             roles:
               exclude:
                 - master
+                - master
+
 router:
   - name: my_router
-    default_flow: async_bulk
-#    denied_client_ip_list:
-#      - 133.37.54.23
+    default_flow: es-flow
+    rules:
+      - method: '*'
+        pattern:
+          - '/_bulk'
+          - '/{index_name}/_bulk'
+        flow:
+          - async_bulk
+      - method: 'GET'
+        pattern:
+          - '/sleep'
+        flow:
+          - sleep
 
 elasticsearch:
   - name: prod
     enabled: true
     schema: http
-    hosts:
-      - 192.168.3.188:9206
-    basic_auth:
-      username: elastic
-      password: password
+    endpoints:
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:
@@ -62,20 +73,18 @@ pipeline:
   - name: bulk_request_ingest
     auto_start: true
     keep_running: true
-    retry_delay_in_ms: 1000
+    retry_delay_in_ms: 100
     processor:
       - fast_bulk_indexing:
-          idle_timeout_in_seconds: 10
+          idle_timeout_in_seconds: 1
           max_connection_per_node: 1000
           worker_size: 3
           bulk:
             compress: false
             batch_size_in_mb: 10
-            batch_size_in_docs: 50000
+            batch_size_in_docs: 1
           queues:
             type: bulk_reshuffle
-          when:
-            cluster_available: [ "prod" ]
 
 stats:
   enabled: false
@@ -83,16 +92,3 @@ stats:
 disk_queue:
   sync_every_records: 10000
   sync_timeout_in_ms: 10000
-memory_queue:
-  capacity: 100000
-
-disk_queue.enabled: false
-disk_queue.default: false
-memory_queue.default: true
-
-
-#floating_ip:
-#  enabled: true
-#  ip: 10.xxx.xxx.xxx
-#  netmask: 255.255.255.0
-#  interface: bond0
