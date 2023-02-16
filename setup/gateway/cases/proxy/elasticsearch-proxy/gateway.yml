@@ -10,7 +10,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: $[[GW_BINDING]]
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: es-flow
@@ -35,10 +35,7 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-     - $[[ES_ENDPOINT]]
-    basic_auth:
-      username: $[[ES_USER]]
-      password: $[[ES_PASS]]
+     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:
