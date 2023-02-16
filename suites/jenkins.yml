@@ -78,6 +78,7 @@ tests:
   - path: setup/gateway/cases/routing/context_switch
   - path: setup/gateway/cases/routing/cross-cluster-search
   - path: setup/gateway/cases/routing/indices-replace
+  - path: setup/gateway/cases/routing/router_by_auth
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder
