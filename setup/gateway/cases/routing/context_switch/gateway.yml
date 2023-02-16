@@ -4,7 +4,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -29,10 +29,6 @@ flow:
           context: _ctx.request.path
           pattern: ^\/.*?\d{4}\.(?P<month>\d{2})\.(?P<day>\d{2}).*?
           group: "parsed_index"
-      - dump:
-          context:
-            - parsed_index.month
-            - parsed_index.day
       - context_switch:
           context: parsed_index.month
           default_flow: echo_message_not_found
@@ -43,12 +39,3 @@ flow:
             - case: ["03"]
               action: redirect_flow
               flow: echo_message_03
-
-#  curl localhost:8000/abd-2023.02.06-abc/_search
-#  ---- DUMPING CONTEXT ----
-#parsed_index.month  :  02
-
-#  curl localhost:8000/abd-2023.01.06-abc/_search
-#  curl localhost:8000/abd-2023.03.06-abc/_search
-#  curl localhost:8000/abd-2023.04.06-abc/_search
-#  curl localhost:8000/abd-2023.05.06-abc/_search
