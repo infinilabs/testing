@@ -4,7 +4,7 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: default_flow
@@ -39,8 +39,3 @@ flow:
 router:
   - name: my_router
     default_flow: default_flow
-
-#curl -u "cn-jamesyang:pass" http://localhost:8000  #go readonly
-#curl -u "cn-devops:pass" http://localhost:8000     #go admin
-#curl -u "other-user:pass" http://localhost:8000    #403
-#curl  http://localhost:8000                        #403
