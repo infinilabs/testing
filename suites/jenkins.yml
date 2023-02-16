@@ -110,3 +110,5 @@ tests:
   # - path: setup/gateway/cases/replication/replication_nonstop-write.yml
   # - path: setup/gateway/cases/replication/replication_simple.yml
   # - path: setup/gateway/cases/replication/replication_via-kafka.yml # also needs kafka deployment
+  # FIXME: need to support env.* in config.templates
+  # - path: setup/gateway/cases/template/config_template
