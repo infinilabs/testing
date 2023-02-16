@@ -1,18 +1,19 @@
 path.data: data
 path.logs: log
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 entry:
   - name: my_es_entry
     enabled: true
     router: my_router
     max_concurrency: 10000
     network:
-      binding: 0.0.0.0:8000
-#    tls:
-#      enabled: true
-#      cert_file: /etc/elasticsearch/certs/es7.crt
-#      key_file: /etc/elasticsearch/certs/es7-key.pem
-#      skip_insecure_verify: false
+      binding: $[[env.LR_GATEWAY_HOST]]
+
 flow:
   - name: primary-write-flow
     filter:
@@ -23,9 +24,6 @@ flow:
             interval: 10s
   - name: request_logging
     filter:
-#      - record:
-#          stdout: true
-#          filename: requests.txt
       - logging:
           queue_name: request_logging
           max_request_body_size: 102400
@@ -37,24 +35,32 @@ flow:
                     - equals:
                         _ctx.request.path: "/favicon.ico"
                     - in:
-                        _ctx.response.status: [200,201]
-                    - in:
                         _ctx.request.path: ["/sw.js"]
               - range:
                   _ctx.elapsed.gte: 1000
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 20000
+      - echo:
+          message: 'ok'
+
 router:
   - name: my_router
     default_flow: primary-write-flow
     tracing_flow: request_logging
+    rules:
+      - method:
+          - GET
+        pattern:
+          - /sleep
+        flow: sleep
 
 elasticsearch:
   - name: es-server #the business server
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
-    basic_auth:
-      username: admin
-      password: admin
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:
@@ -63,10 +69,7 @@ elasticsearch:
   - name: logging-server #the logging server
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
-    basic_auth:
-      username: admin
-      password: admin
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: false
 
@@ -78,6 +81,7 @@ pipeline:
       - indexing_merge:
           input_queue: "request_logging"
           elasticsearch: "logging-server"
+          idle_timeout_in_seconds: 1
           index_name: "gateway_requests"
           output_queue:
             name: "gateway_requests"
@@ -93,10 +97,8 @@ pipeline:
           bulk:
             compress: true
             batch_size_in_mb: 10
-            batch_size_in_docs: 5000
+            batch_size_in_docs: 1
           consumer:
             fetch_max_messages: 100
           queues:
             type: indexing_merge
-          when:
-            cluster_available: [ "logging-server" ]

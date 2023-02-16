@@ -77,3 +77,4 @@ tests:
   - path: setup/gateway/cases/filters/elasticsearch
   - path: setup/gateway/cases/filters/bulk_response_process
   - path: setup/gateway/cases/misc/fast_flow_runner
+  - path: setup/gateway/cases/observability/elasticsearch-request-logging
