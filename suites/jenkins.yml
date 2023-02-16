@@ -61,14 +61,10 @@ tests:
   - path: setup/gateway/cases/filters/sleep
   - path: setup/gateway/cases/filters/switch
   - path: setup/gateway/cases/misc/minio
-  # FIXME: need sudo
-  # - path: setup/gateway/cases/misc/floating_ip
   - path: setup/gateway/cases/elasticsearch/elasticsearch-lookup
   - path: setup/gateway/cases/elasticsearch/elasticsearch-route-by-index
   - path: setup/gateway/cases/elasticsearch/es_migration
   - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
-  # FIXME: need access to es data folder
-  # - path: setup/gateway/cases/elasticsearch/index-backup
   - path: setup/gateway/cases/elasticsearch/index-docs-diff
   - path: setup/gateway/cases/filters/elasticsearch_health_check
   - path: setup/gateway/cases/filters/logging
@@ -79,3 +75,28 @@ tests:
   - path: setup/gateway/cases/misc/fast_flow_runner
   - path: setup/gateway/cases/observability/elasticsearch-request-logging
   - path: setup/gateway/cases/proxy/elasticsearch-proxy
+  # FIXME: need sudo
+  # - path: setup/gateway/cases/misc/floating_ip
+  # FIXME: need access to es data folder
+  # - path: setup/gateway/cases/elasticsearch/index-backup
+  # FIXME: need ldap
+  # - path: setup/gateway/cases/elasticsearch/elasticsearch-with-ldap.yml
+  # - path: setup/gateway/cases/filters/ldap_auth.yml
+  # FIXME: need redis access
+  # - path: setup/gateway/cases/filters/redis_pubsub.yml
+  # FIXME: need multiple hosts/ip
+  # - path: setup/gateway/cases/filters/request_client_ip_filter.yml
+  # - path: setup/gateway/cases/filters/request_client_ip_limiter.yml
+  # - path: setup/gateway/cases/filters/request_host_filter.yml
+  # - path: setup/gateway/cases/filters/request_host_limiter.yml
+  # FIXME: need multiple gateway deployments
+  # - path: setup/gateway/cases/observability/record_and_play.yml
+  # FIXME: need reload function
+  # - path: setup/gateway/cases/reload/echo_test.yml
+  # - path: setup/gateway/cases/reload/es1.yml
+  # - path: setup/gateway/cases/reload/helloworld.yml
+  # FIXME: very complicated scenario
+  # - path: setup/gateway/cases/replication/replication_nonstop-search.yml
+  # - path: setup/gateway/cases/replication/replication_nonstop-write.yml
+  # - path: setup/gateway/cases/replication/replication_simple.yml
+  # - path: setup/gateway/cases/replication/replication_via-kafka.yml # also needs kafka deployment
