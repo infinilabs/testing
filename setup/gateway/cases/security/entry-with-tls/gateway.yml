@@ -7,11 +7,11 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
     tls:
       enabled: true
-      cert_file: /Users/medcl/Downloads/elasticsearch-7.9.0/config/certs/ca.crt
-      key_file: /Users/medcl/Downloads/elasticsearch-7.9.0/config/certs/ca.key
+      cert_file: selfsigned.crt
+      key_file: signed.key
       skip_insecure_verify: false
 
 flow:
