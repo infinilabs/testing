@@ -76,6 +76,7 @@ tests:
   - path: setup/gateway/cases/observability/elasticsearch-request-logging
   - path: setup/gateway/cases/proxy/elasticsearch-proxy
   - path: setup/gateway/cases/routing/context_switch
+  - path: setup/gateway/cases/routing/cross-cluster-search
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder

@@ -7,9 +7,7 @@ entry:
     router: my_router
     max_concurrency: 10000
     network:
-      binding: 0.0.0.0:8000
-#    tls:
-#      enabled: true
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: v2-flow
@@ -38,11 +36,7 @@ router:
 elasticsearch:
   - name: v2
     enabled: true
-    endpoint: http://192.168.3.188:9299
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
   - name: v7
     enabled: true
-    endpoint: http://192.168.3.188:9206
-
-
-#  curl "localhost:8000/v2:_cat/indices?v"
-#  curl "localhost:8000/v7:_cat/indices?v"
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
