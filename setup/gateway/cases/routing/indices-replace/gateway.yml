@@ -7,7 +7,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -23,9 +23,6 @@ router:
 flow:
   - name: test
     filter:
-      - dump:
-          context:
-            - _ctx.request.path
       - javascript:
           params:
             clusterNames: ["cluster01", "cluster02", "cluster03"]
@@ -63,16 +60,5 @@ flow:
                   // event.Tag("js");
               }
             }
-      - dump:
-          context:
-            - _ctx.request.path
-
-# Purpose of this example:
-#  forward requests to multi clusters by adding prefix to each index:
-#  POST /app,news/_search   =>  POST cluster01:app,cluster02:app,cluster01:news,cluster02:news/_search
-
-# TESTING
-#  curl localhost:8000/_search
-#  curl localhost:8000/abc/_search
-#  curl localhost:8000/abc,efg/_search
-#  curl localhost:8000/efg,hij,xyz/_search
+      - echo:
+          message: $[[_ctx.request.path]]
