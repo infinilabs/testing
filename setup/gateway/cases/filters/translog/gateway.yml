@@ -7,11 +7,13 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
     filter:
+      - echo:
+          message: ok
       - translog:
           rotate.max_file_age: 7
           rotate.max_file_count: 10
