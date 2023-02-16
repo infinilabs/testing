@@ -83,6 +83,7 @@ tests:
   - path: setup/gateway/cases/routing/router_rules
   - path: setup/gateway/cases/routing/404-fallback-to-slave
   - path: setup/gateway/cases/security/entry-with-tls
+  - path: setup/gateway/cases/security/ip_denied_permitted
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder

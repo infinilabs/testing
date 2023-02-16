@@ -7,13 +7,14 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: hello_world
     filter:
       - echo:
-          message: "hello world"
+          message: 'hello world'
+
 router:
   - name: my_router
     default_flow: hello_world
@@ -21,7 +22,5 @@ router:
       enabled: true
       client_ip:
         permitted:
-        - 192.168.3.181
-#        - 127.0.0.1
-#        denied:
-#        - 192.168.3.5
+          - 192.168.3.98
+          - 127.0.0.1
