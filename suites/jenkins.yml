@@ -70,3 +70,4 @@ tests:
   # FIXME: need access to es data folder
   # - path: setup/gateway/cases/elasticsearch/index-backup
   - path: setup/gateway/cases/elasticsearch/index-docs-diff
+  - path: setup/gateway/cases/filters/elasticsearch_health_check

@@ -7,13 +7,15 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
     filter:
       - elasticsearch_health_check:
           elasticsearch: dev
+      - echo:
+          message: ok
 
 router:
   - name: my_router
@@ -21,5 +23,5 @@ router:
 
 elasticsearch:
   - name: dev
-    endpoint: http://localhost:9200
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     enabled: true
