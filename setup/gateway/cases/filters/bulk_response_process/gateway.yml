@@ -1,13 +1,18 @@
 path.data: data
 path.logs: log
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 entry:
   - name: my_es_entry
     enabled: true
     router: my_router
     max_concurrency: 2000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 flow:
   - name: test
@@ -16,7 +21,7 @@ flow:
             elasticsearch: prod
       - bulk_response_process:
           success_queue: "success_queue"
-          tag_on_success: ["commit_message_allowed"]
+          tag_on_all_success: ["commit_message_allowed"]
 
 router:
   - name: my_router
@@ -24,5 +29,5 @@ router:
 
 elasticsearch:
   - name: prod
-    endpoint: http://localhost:9200
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     enabled: true
