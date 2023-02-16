@@ -1,0 +1,66 @@
+path.data: data
+path.logs: log
+
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: primary-write-flow
+    filter:
+      - queue:
+          queue_name: 'backup'
+      - set_response:
+          body: '{"success":true}'
+          status: 200
+          content_type: application/json
+      - drop:
+  - name: direct-write-flow
+    filter:
+      - elasticsearch:
+          elasticsearch: 'backup'
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 1000
+      - echo:
+          message: 'ok'
+
+router:
+  - name: my_router
+    default_flow: direct-write-flow
+    rules:
+      - method:
+          - POST
+        pattern:
+          - /_bulk
+          - /{any_index}/_bulk
+        flow: primary-write-flow
+      - method:
+          - GET
+        pattern:
+          - /sleep
+        flow: sleep
+
+elasticsearch:
+  - name: backup
+    enabled: true
+    endpoints:
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+
+pipeline:
+  - name: queue_consumer
+    auto_start: true
+    keep_running: true
+    processor:
+      - fast_flow_runner:
+          input_queue: 'backup'
+          flow: direct-write-flow
