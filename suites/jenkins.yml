@@ -74,3 +74,4 @@ tests:
   - path: setup/gateway/cases/filters/logging
   - path: setup/gateway/cases/filters/retry_limiter
   - path: setup/gateway/cases/filters/translog
+  - path: setup/gateway/cases/filters/elasticsearch

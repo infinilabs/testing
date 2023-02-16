@@ -1,0 +1,32 @@
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: test
+    filter:
+      - elasticsearch:
+          elasticsearch: dev
+
+router:
+  - name: my_router
+    default_flow: test
+
+elasticsearch:
+  - name: dev
+    enabled: true
+    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    discovery:
+      enabled: true
+      refresh:
+        enabled: true
+    basic_auth:
+      username: elastic
+      password: pass
