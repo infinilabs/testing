@@ -73,7 +73,7 @@ pipeline:
   - name: bulk_request_ingest
     auto_start: true
     keep_running: true
-    retry_delay_in_ms: 100
+    retry_delay_in_ms: 1000
     processor:
       - fast_bulk_indexing:
           idle_timeout_in_seconds: 1

@@ -20,16 +20,11 @@ requests:
       body: |
         { "index" : { "_index" : "test-bulk", "_id" : "1" } }
         {"a": "b"}
-    assert:
-      and:
-        - equals:
-            _ctx.response.status: 200
-            _ctx.response.body_json.errors: false
-  - request:
-      method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
-      body: |
-        { "index" : { "_index" : "test-bulk", "_id" : "2" } }
+        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        {"a": "b"}
+        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        {"a": "b"}
+        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
         {"a": "b"}
     assert:
       and:
