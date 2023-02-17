@@ -86,6 +86,7 @@ tests:
   - path: setup/gateway/cases/security/ip_denied_permitted
   - path: setup/gateway/cases/security/log4j-request-filter
   - path: setup/gateway/cases/throttle/bulk_requests_limit
+  - path: setup/gateway/cases/throttle/limit_response_payload_size
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder

@@ -7,7 +7,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -30,8 +30,4 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
-
-# TESTING
-#  curl localhost:8000/
-#  curl localhost:8000/_cluster/state
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
