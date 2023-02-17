@@ -7,7 +7,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -38,6 +38,11 @@ router:
           - "/{any_index}/_mget"
         flow:
           - read_flow
+      - method:
+          - GET
+        pattern:
+          - /sleep
+        flow: sleep
 
 flow:
   - name: forward_to_es
@@ -63,7 +68,7 @@ flow:
       - if:
          range:
            _ctx.request.body_length:
-             gte: 3
+             gte: 256
         then:
           - set_response:
               body: '{"message":"request body is too large."}'
@@ -83,18 +88,15 @@ flow:
           status: 429
           message: '{"message":"[read] request too frequently."}'
           action: drop
-
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 1000
+      - echo:
+          message: 'ok'
 
 elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-      - http://192.168.3.188:9206
-
-# TESTING
-#  curl localhost:8000/_cat/indices
-#  curl localhost:8000/
-#  curl-json -XPOST  localhost:8000/_search'
-#  curl-json -XPOST  localhost:8000/_search -d'{"query":{}}'
-#  curl-json -XPOST  localhost:8000/doc/_doc/ -v -d '{}'
-#  curl-json -XPOST  localhost:8000/doc/_doc/ -v -d '{"a":1}'
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
