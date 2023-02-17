@@ -4,7 +4,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -20,7 +20,7 @@ elasticsearch:
   - name: test_cluster
     enabled: true
     endpoints:
-      - http://localhost:9200
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     traffic_control: #global traffic control
       max_bps_per_node: 209715200 #max total bytes send to es per node, 200MB/s
       max_wait_time_in_ms: 1000
