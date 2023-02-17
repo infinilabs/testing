@@ -52,13 +52,13 @@ pipeline:
       - es_scroll:
           slice_size: 2
           batch_size: 5000
-          indices: "test-10"
+          indices: "es_migration-test"
           elasticsearch: source
           output_queue: source_index_dump
           partition_size: 20
           scroll_time: "5m"
           index_rename:
-            "*": "test-10-new"
+            "*": "es_migration-test-new"
           remove_type: true
 
   - name: target_indexing

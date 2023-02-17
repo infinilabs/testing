@@ -7,7 +7,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10/_doc?refresh
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
       body: '
 {
 "model": "Porshe",
@@ -21,7 +21,7 @@ requests:
       status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10/_doc?refresh
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
       body: '
 {
 "model": "Porshe",
@@ -35,7 +35,7 @@ requests:
       status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10/_search?pretty
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_search?pretty
     assert:
       and:
         - equals:
@@ -53,12 +53,12 @@ requests:
         _ctx.response.body: ok
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10-new/_refresh
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh
     response:
       status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10-new/_search?pretty
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_search?pretty
     assert:
       and:
         - equals:
@@ -69,11 +69,11 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test
     response:
       status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-10-new
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new
     response:
       status: 200

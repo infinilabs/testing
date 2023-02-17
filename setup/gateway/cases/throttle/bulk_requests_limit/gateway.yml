@@ -15,12 +15,12 @@ flow:
     filter:
       - bulk_request_throttle:
           indices:
-            test:
+            bulk_requests_limit-test:
               max_requests: 2
               action: drop
               message: "test writing too fast。"
               log_warn_message: true
-            test1:
+            bulk_requests_limit-test1:
               max_bytes: 128
               action: drop
               message: "test1 writing too fast。"

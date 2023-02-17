@@ -9,7 +9,7 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "create" : { "_index" : "test1", "_id" : "3" } }
+        { "create" : { "_index" : "bulk_requests_limit-test1", "_id" : "3" } }
         { "field1" : "value3" }
     assert:
       and:
@@ -19,7 +19,7 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "create" : { "_index" : "test1", "_id" : "3" } }
+        { "create" : { "_index" : "bulk_requests_limit-test1", "_id" : "3" } }
         { "field1" : "value3" }
     assert:
       and:
@@ -30,7 +30,7 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "create" : { "_index" : "test", "_id" : "3" } }
+        { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
     assert:
       and:
@@ -40,7 +40,7 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "create" : { "_index" : "test", "_id" : "3" } }
+        { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
     assert:
       and:
@@ -50,7 +50,7 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "create" : { "_index" : "test", "_id" : "3" } }
+        { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
     assert:
       and:
@@ -63,20 +63,20 @@ requests:
       body: |
         { }
         {"query" : {"match" : { "message": "this is a test"}}}
-        {"index": "test1"}
+        {"index": "bulk_requests_limit-test1"}
         {"query" : {"match_all" : {}}}
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.LR_GATEWAY_HOST]]/bulk_requests_limit-test
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.LR_GATEWAY_HOST]]/bulk_requests_limit-test1
     assert:
       equals:
         _ctx.response.status: 200

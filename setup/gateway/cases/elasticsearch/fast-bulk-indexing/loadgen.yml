@@ -18,13 +18,13 @@ requests:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
       body: |
-        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
         {"a": "b"}
-        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
         {"a": "b"}
-        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
         {"a": "b"}
-        { "index" : { "_index" : "test-bulk", "_id" : "1" } }
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
         {"a": "b"}
     assert:
       and:
@@ -33,7 +33,7 @@ requests:
             _ctx.response.body_json.errors: false
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_doc/1
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_doc/1
     assert:
       and:
         - equals:
@@ -48,22 +48,22 @@ requests:
             _ctx.response.body: ok
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_refresh
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_refresh
     assert:
       and:
         - equals:
             _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_doc/1
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_doc/1
     assert:
       and:
         - equals:
             _ctx.response.status: 200
-            _ctx.response.body_json._index: test-bulk
+            _ctx.response.body_json._index: fast-bulk-indexing-test
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test
     assert:
       and:
         - equals:
