@@ -7,7 +7,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -31,8 +31,6 @@ flow:
           max_response_body_size: 10240
   - name: test
     filter:
-      - dump:
-          request: true
       - javascript:
           params:
             rewriteRoutingThrottleSize: 5
@@ -87,52 +85,5 @@ flow:
               }
 
             }
-      - dump:
-          request: true
-          context:
-            - _ctx.request.query_args.routing
-            - _ctx.request.path
-      - http:
-          schema: "http"
-          hosts:
-            - "localhost:8088"
-
-elasticsearch:
-  - name: logging-server
-    enabled: true
-    endpoints:
-      - http://localhost:9200
-pipeline:
-  - name: indexing_merge
-    auto_start: true
-    keep_running: true
-    processor:
-      - indexing_merge:
-          input_queue: "request_logging"
-          elasticsearch: "logging-server"
-          index_name: "infini_gateway_requests"
-          output_queue:
-            name: "gateway_requests"
-            label:
-              tag: "request_logging"
-          worker_size: 1
-          bulk_size_in_mb: 10
-  - name: logging_requests
-    auto_start: true
-    keep_running: true
-    processor:
-      - bulk_indexing:
-          bulk:
-            compress: true
-            batch_size_in_mb: 10
-            batch_size_in_docs: 5000
-          consumer:
-            fetch_max_messages: 100
-          queues:
-            type: indexing_merge
-          when:
-            cluster_available: [ "logging-server" ]
-
-
-# Purpose of this example:
-# 
+      - echo:
+          message: $[[_ctx.request.path]]
