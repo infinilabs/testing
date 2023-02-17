@@ -4,7 +4,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -17,11 +17,5 @@ flow:
           context: _ctx.request.path
           pattern: ^\/.*?\d{4}\.(?P<month>\d{2})\.(?P<day>\d{2}).*?
           group: "parsed_index"
-      - dump:
-          context:
-            - parsed_index.month
-            - parsed_index.day
-
-#  curl localhost:8000/abd-2023.02.06-abc/_search
-#  ---- DUMPING CONTEXT ----
-#parsed_index.month  :  02
+      - echo:
+          message: $[[parsed_index.month]] - $[[parsed_index.day]]

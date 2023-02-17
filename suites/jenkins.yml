@@ -89,6 +89,7 @@ tests:
   - path: setup/gateway/cases/throttle/limit_response_payload_size
   - path: setup/gateway/cases/throttle/node_level_limit
   - path: setup/gateway/cases/throttle/throttle_per_read_write
+  - path: setup/gateway/cases/transform/context_parse
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder
