@@ -4,7 +4,7 @@ entry:
     router: default
     max_concurrency: 20000
     network:
-      binding: 0.0.0.0:8000
+      binding: $[[env.LR_GATEWAY_HOST]]
 
 router:
   - name: default
@@ -16,13 +16,12 @@ flow:
       - bulk_request_throttle:
           indices:
             test:
-              max_requests: 5
+              max_requests: 2
               action: drop
               message: "test writing too fast。"
               log_warn_message: true
             test1:
-#              max_requests: 10
-              max_bytes: 512
+              max_bytes: 128
               action: drop
               message: "test1 writing too fast。"
               log_warn_message: true
@@ -41,28 +40,11 @@ flow:
           when:
             contains:
               _ctx.request.path: /_msearch
+
 elasticsearch:
   - name: test_cluster
     enabled: true
     endpoints:
-      - http://192.168.3.188:9299
+      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: false
-
-#
-#  POST _bulk
-#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
-#  { "field1" : "value3" }
-#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
-#  { "field1" : "value3" }
-#  { "index" : { "_index" : "test1", "_id" : "1", "_type" : "_doc" } }
-#  { "field1" : "value1" }
-#  { "create" : { "_index" : "test1", "_id" : "3", "_type" : "_doc" } }
-#  { "field1" : "value3" }
-
-#
-#  GET test/_msearch
-#  { }
-#  {"query" : {"match" : { "message": "this is a test"}}}
-#  {"index": "test4"}
-#  {"query" : {"match_all" : {}}}
