@@ -14,8 +14,9 @@ requests:
   "key": "dev-1"
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/details/_doc?refresh
@@ -26,8 +27,9 @@ requests:
   "weight":1
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/details/_doc?refresh
@@ -38,8 +40,9 @@ requests:
   "weight":2
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/summary/_search?pretty
@@ -53,10 +56,12 @@ requests:
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/summary
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/details
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200

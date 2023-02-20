@@ -17,8 +17,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
@@ -31,8 +32,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_search?pretty
@@ -54,8 +56,9 @@ requests:
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_search?pretty
@@ -70,10 +73,12 @@ requests:
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200

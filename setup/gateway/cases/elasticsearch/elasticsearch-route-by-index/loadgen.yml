@@ -17,8 +17,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/mall-sab/_doc?refresh
@@ -31,8 +32,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/other/_doc?refresh
@@ -45,8 +47,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/apm-sab/_search?pretty
@@ -77,15 +80,18 @@ requests:
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/mall-sab
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/apm-sab
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/other
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200

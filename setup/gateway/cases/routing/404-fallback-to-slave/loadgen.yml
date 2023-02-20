@@ -17,8 +17,9 @@ requests:
 "genres": ["Sporty", "Classic"]
 }
         '
-    response:
-      status: 201
+    assert:
+      equals:
+        _ctx.response.status: 201
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search
@@ -35,5 +36,6 @@ requests:
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/abcd
-    response:
-      status: 200
+    assert:
+      equals:
+        _ctx.response.status: 200
