@@ -91,6 +91,7 @@ tests:
   - path: setup/gateway/cases/throttle/throttle_per_read_write
   - path: setup/gateway/cases/transform/context_parse
   - path: setup/gateway/cases/transform/convert-search-to-msearch
+  - path: setup/loadgen/cases/dummy
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder
