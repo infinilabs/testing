@@ -1,5 +1,5 @@
 env:
-  LR_ELASTICSEARCH_ENDPOINT: http://127.0.0.1:19201
+  LR_ELASTICSEARCH_ENDPOINT: http://127.0.0.1:19200
   LR_GATEWAY_HOST: 127.0.0.1:8001
   LR_GATEWAY_CMD: /Users/kassian/Workspace/infini/src/infini.sh/gateway/bin/gateway
   LR_GATEWAY_API_HOST: 127.0.0.1:9000
@@ -11,4 +11,4 @@ env:
   LR_MINIO_TEST_BUCKET: jenkins-test-data
   LR_GATEWAY_FLOATING_IP_HOST: 192.168.0.234:8001
 tests:
-  - path: setup/gateway/cases/misc/floating_ip
+  - path: setup/gateway/cases/proxy/elasticsearch-proxy
