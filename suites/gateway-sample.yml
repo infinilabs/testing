@@ -11,4 +11,7 @@ env:
   LR_MINIO_TEST_BUCKET: jenkins-test-data
   LR_GATEWAY_FLOATING_IP_HOST: 192.168.0.234:8001
 tests:
+  - path: setup/gateway/cases/misc/fast_flow_runner
+  - path: setup/gateway/cases/observability/elasticsearch-request-logging
   - path: setup/gateway/cases/proxy/elasticsearch-proxy
+  - path: setup/gateway/cases/routing/context_switch

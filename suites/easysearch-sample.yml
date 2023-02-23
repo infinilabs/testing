@@ -1,0 +1,8 @@
+env:
+  LR_EASYSEARCH_ENDPOINT: https://127.0.0.1:9200
+  ES_USER: admin
+  ES_PASSWORD: admin
+  LR_LOADGEN_CMD: /Users/kassian/Workspace/infini/src/infini.sh/loadgen/bin/loadgen
+  LR_TEST_DIR: .
+tests:
+  - path: setup/easysearch/cases/hello_world
