@@ -7,9 +7,9 @@ runner:
 requests:
   - request:
       method: GET
-      url: $[[env.LR_EASYSEARCH_ENDPOINT]]/
+      url: $[[env.ES_ENDPOINT]]/
       basic_auth:
-        username: $[[env.ES_USER]]
+        username: $[[env.ES_USERNAME]]
         password: $[[env.ES_PASSWORD]]
     assert:
       and:
@@ -20,9 +20,9 @@ requests:
             _ctx.response.body_json.version.number: '1.0.0'
   - request:
       method: POST
-      url: $[[env.LR_EASYSEARCH_ENDPOINT]]/easysearch-test/_doc?refresh
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc?refresh
       basic_auth:
-        username: $[[env.ES_USER]]
+        username: $[[env.ES_USERNAME]]
         password: $[[env.ES_PASSWORD]]
       body: '{"a": "b"}'
     assert:
@@ -32,9 +32,9 @@ requests:
       - doc_id: _ctx.response.body_json._id
   - request:
       method: GET
-      url: $[[env.LR_EASYSEARCH_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]
       basic_auth:
-        username: $[[env.ES_USER]]
+        username: $[[env.ES_USERNAME]]
         password: $[[env.ES_PASSWORD]]
     assert:
       equals:
@@ -42,9 +42,9 @@ requests:
         _ctx.response.body_json._source.a: b
   - request:
       method: DELETE
-      url: $[[env.LR_EASYSEARCH_ENDPOINT]]/easysearch-test
+      url: $[[env.ES_ENDPOINT]]/easysearch-test
       basic_auth:
-        username: $[[env.ES_USER]]
+        username: $[[env.ES_USERNAME]]
         password: $[[env.ES_PASSWORD]]
     assert:
       equals:
