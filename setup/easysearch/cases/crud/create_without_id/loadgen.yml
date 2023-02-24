@@ -1,0 +1,81 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  # create without id
+  - request:
+      method: POST
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: '{"a": "b"}'
+    assert:
+      equals:
+        _ctx.response.status: 201
+    register:
+      - doc_id: _ctx.response.body_json._id
+  # get existed doc
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json._source.a: b
+  # update existed doc
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: '{"a": "c"}'
+    assert:
+      equals:
+        _ctx.response.status: 200
+  # get existed doc
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json._source.a: c
+  # delete existed doc
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/$[[doc_id]]
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 404
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/easysearch-test
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
