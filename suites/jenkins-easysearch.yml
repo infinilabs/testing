@@ -8,3 +8,4 @@ tests:
   - path: setup/easysearch/cases/hello_world
   - path: setup/easysearch/cases/crud/create_without_id
   - path: setup/easysearch/cases/crud/create_with_id
+  - path: setup/easysearch/cases/crud/get
