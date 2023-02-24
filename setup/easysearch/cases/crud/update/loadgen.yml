@@ -1,0 +1,74 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/easysearch-test
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  # create with id
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/test1?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: '{"a": "c"}'
+    assert:
+      equals:
+        _ctx.response.status: 201
+  - request:
+      method: POST
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_update/test1?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: '{ "script" : { "source": "ctx._source.a = \"c\"", "lang": "painless" } }'
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/test1
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json._source.a: c
+  - request:
+      method: POST
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_update_by_query?refresh
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: '{ "script" : { "source": "ctx._source.a = \"d\"", "lang": "painless" }, "query": { "match": { "a": "c" } } }'
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/easysearch-test/_doc/test1
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+            _ctx.response.body_json._source.a: d
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/easysearch-test
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
