@@ -1,3 +1,6 @@
+path.data: suites/jenkins-gateway/data
+path.logs: suites/jenkins-gateway/log
+
 env:
   LR_ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19201
   LR_GATEWAY_HOST: 0.0.0.0:18000

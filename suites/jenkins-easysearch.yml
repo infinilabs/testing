@@ -1,3 +1,6 @@
+path.data: suites/jenkins-easysearch/data
+path.logs: suites/jenkins-easysearch/log
+
 env:
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
