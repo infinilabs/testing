@@ -14,3 +14,4 @@ tests:
   - path: setup/easysearch/cases/crud/get
   - path: setup/easysearch/cases/crud/delete
   - path: setup/easysearch/cases/crud/update
+  - path: setup/easysearch/cases/security/roles
