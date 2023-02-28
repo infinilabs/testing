@@ -1,0 +1,153 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/user/rolemap-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/role/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/role/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+        "cluster": ["all"],
+          "indices": [
+            {
+              "names": [ "index1", "index2" ],
+              "privileges": ["all"],
+              "field_security" : [],
+              "query": "{\"match\": {\"title\": \"foo\"}}"
+            }
+          ]
+        }
+    assert:
+      equals:
+        _ctx.response.status: 201
+        _ctx.response.body_json.status: CREATED
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "backend_roles" : [ "admin" ],
+          "users" : [ "rolemap-user" ]
+        }
+    assert:
+      equals:
+        _ctx.response.status: 404
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/user/rolemap-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "password": "adminpass",
+          "attributes": {
+            "attribute1": "value1",
+            "attribute2": "value2"
+          }
+        }
+    assert:
+      equals:
+        _ctx.response.status: 201
+        _ctx.response.body_json.status: CREATED
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/rolemap-user
+      basic_auth:
+        username: rolemap-user
+        password: adminpass
+    assert:
+      equals:
+        _ctx.response.status: 403
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "backend_roles" : [ "admin" ],
+          "users" : [ "rolemap-user" ]
+        }
+    assert:
+      equals:
+        _ctx.response.status: 201
+        _ctx.response.body_json.status: CREATED
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "backend_roles" : [ "admin" ],
+          "users" : [ "rolemap-user" ]
+        }
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/rolemap-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/rolemap-user
+      basic_auth:
+        username: rolemap-user
+        password: adminpass
+    assert:
+      equals:
+        _ctx.response.status: 403
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/role_mapping/rolemap-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200

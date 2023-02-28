@@ -16,3 +16,4 @@ tests:
   - path: setup/easysearch/cases/crud/update
   - path: setup/easysearch/cases/security/roles
   - path: setup/easysearch/cases/security/users
+  - path: setup/easysearch/cases/security/role-mappings
