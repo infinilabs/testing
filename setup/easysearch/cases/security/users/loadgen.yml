@@ -1,0 +1,191 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/user/worf
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/role/test-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/role/test-user-role
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+        "cluster": ["all"],
+          "indices": [
+            {
+              "names": [ "index1", "index2" ],
+              "privileges": ["all"],
+              "field_security" : [],
+              "query": "{\"match\": {\"title\": \"foo\"}}"
+            }
+          ]
+        }
+    assert:
+      equals:
+        _ctx.response.status: 201
+        _ctx.response.body_json.status: CREATED
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "password": "adminpass",
+          "security_roles": ["test-user-role"],
+          "backend_roles": ["admin"],
+          "attributes": {
+            "attribute1": "value1",
+            "attribute2": "value2"
+          }
+        }
+    assert:
+      equals:
+        _ctx.response.status: 201
+        _ctx.response.body_json.status: CREATED
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: test-user
+        password: adminpass
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: PUT
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        {
+          "password": "adminpass2",
+          "security_roles": ["test-user-role"],
+          "backend_roles": ["admin"],
+          "attributes": {
+            "attribute1": "value1",
+            "attribute2": "value2"
+          }
+        }
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json.status: OK
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: test-user
+        password: adminpass2
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: PATCH
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        [
+          {
+            "op": "replace", "path": "/backend_roles", "value": ["klingons"]
+          },
+          {
+            "op": "replace", "path": "/security_roles", "value": ["ship_manager"]
+          },
+          {
+            "op": "replace", "path": "/attributes", "value": { "newattribute": "newvalue" }
+          }
+        ]
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json.status: OK
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: PATCH
+      url: $[[env.ES_ENDPOINT]]/_security/user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+      body: |
+        [
+          {
+            "op": "add", "path": "/worf", "value": { "password": "testpassword2", "backend_roles": ["testrole2"] }
+          },
+          {
+            "op": "remove", "path": "/test-user"
+          }
+        ]
+    assert:
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json.status: OK
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/worf
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: $[[env.ES_ENDPOINT]]/_security/user/test-user
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 404
+  - request:
+      method: DELETE
+      url: $[[env.ES_ENDPOINT]]/_security/user/worf
+      basic_auth:
+        username: $[[env.ES_USERNAME]]
+        password: $[[env.ES_PASSWORD]]
+    assert:
+      equals:
+        _ctx.response.status: 200
