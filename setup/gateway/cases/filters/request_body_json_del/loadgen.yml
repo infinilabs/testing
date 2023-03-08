@@ -13,7 +13,7 @@ requests:
     assert:
       and:
         not:
-          has_fields:
+          exists:
             - _ctx.response.body_json.query.bool.should
-        has_fields:
+        exists:
           - _ctx.response.body_json.query.bool.must

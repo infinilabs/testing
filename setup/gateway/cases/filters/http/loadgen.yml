@@ -13,7 +13,7 @@ requests:
         password: passwd
     assert:
       and:
-        - has_fields:
+        - exists:
           - _ctx.response.body_json.status
         - equals:
             _ctx.response.status: 200

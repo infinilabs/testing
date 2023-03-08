@@ -12,4 +12,4 @@ requests:
       and:
         - equals:
             _ctx.response.status: 200
-        - has_fields: ['_ctx.response.body_json.status']
+        - exists: ['_ctx.response.body_json.status']
