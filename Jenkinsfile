@@ -36,6 +36,16 @@ pipeline {
             }
           }
         }
+        stage('Benchmarking Gateway') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+              sh label: 'benchmark-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins-benchmark-gateway.yml'
+            }
+          }
+        }
         stage('Testing EasySearch') {
           agent {
             label 'linux'
