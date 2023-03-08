@@ -1,0 +1,121 @@
+env:
+  LR_ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+  LR_ELASTICSEARCH_METRIC_ENDPOINT: http://127.0.0.1:9200
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+
+path.data: data
+path.logs: log
+
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 2000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: test
+    filter:
+      - queue:
+          queue_name: test_queue
+      - echo:
+          message: "ok"
+
+router:
+  - name: my_router
+    default_flow: test
+
+metrics:
+  enabled: true
+  queue: metrics
+  instance:
+    enabled: true
+  network:
+    enabled: true
+    summary: true
+
+pipeline:
+  - name: metrics_merge
+    auto_start: true
+    keep_running: true
+    processor:
+      - indexing_merge:
+          input_queue: "metrics"
+          elasticsearch: "logserver"
+          index_name: $[[env.METRIC_OUTPUT_INDEX]]
+          output_queue:
+            name: "bulk_requests"
+            label:
+              tag: "metrics"
+          worker_size: 1
+          bulk_size_in_mb: 10
+  - name: ingest_merged_requests
+    auto_start: true
+    keep_running: true
+    processor:
+      - bulk_indexing:
+          num_of_slices: 3 #runtime slicing
+          bulk:
+            compress: false
+            batch_size_in_mb: 10
+            batch_size_in_docs: 500
+            #remove_duplicated_newlines: true
+            invalid_queue: "invalid_request"
+            response_handle:
+              bulk_result_message_queue: "system_failure_messages"
+              max_request_body_size: 10240
+              max_response_body_size: 10240
+              save_success_results: false
+              max_error_details_count: 5
+          consumer:
+            fetch_max_messages: 100
+          queues:
+            type: indexing_merge
+          when:
+            cluster_available: ["logserver"]
+
+elasticsearch:
+  - name: logserver
+    enabled: true
+    endpoints:
+      - $[[env.LR_ELASTICSEARCH_METRIC_ENDPOINT]]
+    discovery:
+      enabled: true
+      refresh:
+        enabled: true
+        interval: 60s
+
+disk_queue:
+  enabled: true
+  default: true
+  retention:
+    max_num_of_local_files: 10
+  min_msg_size: 1
+  max_msg_size: 104857600
+  max_bytes_per_file: 104857600
+  eof_retry_delay_in_ms: 500
+  sync_every_records: 1000
+  sync_timeout_in_ms: 1000
+  notify_chan_buffer_size: 100
+  read_chan_buffer_size: 0
+  write_chan_buffer_size: 0
+  warning_free_bytes: 10737418240
+  reserved_free_bytes: 5368709120
+  prepare_files_to_read: true
+  compress:
+    idle_threshold: 5
+    delete_after_compress: true
+    num_of_files_decompress_ahead: 3
+    message:
+      enabled: false
+      level: 3
+    segment:
+      enabled: true
+      level: 11

@@ -1,0 +1,40 @@
+env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+runner:
+  no_warm: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: POST
+      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      body: |
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
+        { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }

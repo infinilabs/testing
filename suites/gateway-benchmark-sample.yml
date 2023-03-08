@@ -1,0 +1,16 @@
+env:
+  LR_ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+  LR_ELASTICSEARCH_METRIC_ENDPOINT: http://127.0.0.1:9200
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_CMD: /Users/kassian/Workspace/infini/src/infini.sh/gateway/bin/gateway
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  LR_LOADGEN_CMD: /Users/kassian/Workspace/infini/src/infini.sh/testing/bin/loadgen
+  LR_TEST_DIR: .
+  LR_MINIO_API_HOST: 127.0.0.1:9001
+  LR_MINIO_API_USERNAME: minioadmin
+  LR_MINIO_API_PASSWORD: minioadmin
+  LR_MINIO_TEST_BUCKET: jenkins-test-data
+  LR_GATEWAY_FLOATING_IP_HOST: 192.168.0.234:8001
+  METRIC_OUTPUT_INDEX: .infini_metrics
+tests:
+  - path: setup/gateway/benchmarks/disk_queue/default
