@@ -78,19 +78,12 @@ pipeline:
             fetch_max_messages: 100
           queues:
             type: indexing_merge
-          when:
-            cluster_available: ["logserver"]
 
 elasticsearch:
   - name: logserver
     enabled: true
     endpoints:
       - $[[env.LR_ELASTICSEARCH_METRIC_ENDPOINT]]
-    discovery:
-      enabled: true
-      refresh:
-        enabled: true
-        interval: 60s
 
 disk_queue:
   enabled: true
