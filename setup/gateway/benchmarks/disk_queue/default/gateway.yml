@@ -3,6 +3,7 @@ env:
   LR_ELASTICSEARCH_METRIC_ENDPOINT: http://127.0.0.1:9200
   LR_GATEWAY_HOST: 127.0.0.1:8001
   LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  METRIC_OUTPUT_INDEX: .infini_metrics
 
 path.data: data
 path.logs: log
@@ -65,7 +66,7 @@ pipeline:
           bulk:
             compress: false
             batch_size_in_mb: 10
-            batch_size_in_docs: 500
+            batch_size_in_docs: 10
             #remove_duplicated_newlines: true
             invalid_queue: "invalid_request"
             response_handle:
