@@ -4,11 +4,20 @@ runner:
   log_requests: true
   assert_invalid: true
   assert_error: true
+  disable_header_names_normalizing: true
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.LR_GATEWAY_HOST]]/test_body
     assert:
       equals:
+        _ctx.response.status: 419
+        _ctx.response.header.TIMES: '100'
         _ctx.response.body_json.success: true
         _ctx.response.body_json.message: hello world
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/test_path
+    assert:
+      contains:
+        _ctx.response.body: GET /test_path2
