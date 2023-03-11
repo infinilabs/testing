@@ -1,3 +1,6 @@
+env:
+  LR_GATEWAY_HOST: 0.0.0.0:8000
+
 path.data: data
 path.logs: log
 
