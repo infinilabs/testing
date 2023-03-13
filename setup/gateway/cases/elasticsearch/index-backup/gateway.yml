@@ -34,7 +34,7 @@ router:
 elasticsearch:
   - name: dev
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
 
 pipeline:
   - name: index_backup
@@ -50,7 +50,7 @@ pipeline:
           s3:
             server: my_blob_store
             location: cn-beijing-001
-            bucket: $[[env.LR_MINIO_TEST_BUCKET]]
+            bucket: $[[env.MINIO_TEST_BUCKET]]
 
 elastic:
   elasticsearch: dev
@@ -65,6 +65,6 @@ elastic:
 
 s3:
   my_blob_store:
-    endpoint: $[[env.LR_MINIO_API_HOST]]
-    access_key: $[[env.LR_MINIO_API_USERNAME]]
-    access_secret: $[[env.LR_MINIO_API_PASSWORD]]
+    endpoint: $[[env.MINIO_API_HOST]]
+    access_key: $[[env.MINIO_API_USERNAME]]
+    access_secret: $[[env.MINIO_API_PASSWORD]]

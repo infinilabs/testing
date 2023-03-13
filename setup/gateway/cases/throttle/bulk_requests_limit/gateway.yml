@@ -45,6 +45,6 @@ elasticsearch:
   - name: test_cluster
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: false

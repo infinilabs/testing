@@ -36,7 +36,7 @@ router:
 elasticsearch:
   - name: v2
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
   - name: v7
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]

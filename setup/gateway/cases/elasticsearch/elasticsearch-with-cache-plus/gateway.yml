@@ -50,11 +50,11 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
   - name: logging-server #the logging server
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
     basic_auth:
       username: admin
       password: admin

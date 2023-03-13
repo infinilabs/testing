@@ -32,7 +32,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins-gateway.yml'
+              sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat.yml'
             }
           }
         }
@@ -42,7 +42,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'benchmark-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins-benchmark-gateway.yml'
+              sh label: 'benchmark-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-benchmark.yml'
             }
           }
         }
@@ -52,7 +52,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'testing-easysearch', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins-easysearch.yml'
+              sh label: 'testing-easysearch', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/easysearch-uat.yml'
             }
           }
         }

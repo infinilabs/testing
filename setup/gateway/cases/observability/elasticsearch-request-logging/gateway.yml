@@ -60,7 +60,7 @@ elasticsearch:
   - name: es-server #the business server
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:
@@ -69,7 +69,7 @@ elasticsearch:
   - name: logging-server #the logging server
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: false
 

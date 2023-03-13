@@ -9,3 +9,7 @@
 - Set-up necessary dependencies on local machine
 - Update `suites/gateway-sample.yml` as needed
 - Run `loadrun -config suites/gateway-sample.yml` to run the test suites
+
+## Quick run
+
+If you need to test individual cases manually, it's suggested to set necessary environments on you local machine, follow the same naming conventions as `suites/*.yml`. Once these environments are set-up, you could run `gateway` and `loadgen` without modify each test case.

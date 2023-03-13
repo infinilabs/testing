@@ -60,7 +60,7 @@ elasticsearch:
   - name: primary
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       interval: 60s

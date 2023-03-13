@@ -35,7 +35,7 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints:
-     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+     - $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:

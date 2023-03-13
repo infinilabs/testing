@@ -1,0 +1,19 @@
+path.data: suites/jenkins/gateway-benchmark/data
+path.logs: suites/jenkins/gateway-benchmark/log
+
+env:
+  LR_GATEWAY_HOST: 0.0.0.0:18001
+  LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
+  LR_GATEWAY_API_HOST: localhost:19001
+  LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
+  LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
+  ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19201
+  ELASTICSEARCH_METRIC_ENDPOINT: http://192.168.3.181:19200
+  MINIO_API_HOST: 192.168.3.185:19000
+  MINIO_API_USERNAME: minioadmin
+  MINIO_API_PASSWORD: minioadmin
+  MINIO_TEST_BUCKET: jenkins-test-data
+  GATEWAY_FLOATING_IP_HOST: 192.168.3.234:18001
+  METRIC_OUTPUT_INDEX: .infini_metrics-jenkins
+tests:
+  - path: setup/gateway/benchmarks/disk_queue/default

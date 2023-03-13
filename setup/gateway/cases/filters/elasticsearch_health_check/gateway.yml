@@ -23,5 +23,5 @@ router:
 
 elasticsearch:
   - name: dev
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
     enabled: true

@@ -22,7 +22,7 @@ router:
 elasticsearch:
   - name: dev
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
     discovery:
       enabled: true
       refresh:

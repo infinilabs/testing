@@ -14,7 +14,7 @@ requests:
         _ctx.response.body: 'ok'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_FLOATING_IP_HOST]]/test
+      url: http://$[[env.GATEWAY_FLOATING_IP_HOST]]/test
     assert:
       equals:
         _ctx.response.status: 200

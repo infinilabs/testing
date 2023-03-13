@@ -54,7 +54,7 @@ elasticsearch:
   - name: backup
     enabled: true
     endpoints:
-      - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
 
 pipeline:
   - name: queue_consumer

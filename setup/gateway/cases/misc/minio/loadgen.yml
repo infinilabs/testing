@@ -47,7 +47,7 @@ requests:
       - queue_id: _ctx.response.body_json.disk_test.metadata.id
   - request:
       method: HEAD
-      url: http://$[[env.LR_MINIO_API_HOST]]/$[[env.LR_MINIO_TEST_BUCKET]]/cfkr9215k34l5enovsng/queue/$[[queue_id]]/000000000.dat.zstd
+      url: http://$[[env.MINIO_API_HOST]]/$[[env.MINIO_TEST_BUCKET]]/cfkr9215k34l5enovsng/queue/$[[queue_id]]/000000000.dat.zstd
     assert:
       equals:
         _ctx.response.status: 200

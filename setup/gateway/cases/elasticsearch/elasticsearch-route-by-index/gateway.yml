@@ -45,12 +45,12 @@ elasticsearch:
   - name: es1-apm
     enabled: true
     endpoints:
-     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+     - $[[env.ELASTICSEARCH_ENDPOINT]]
   - name: es2-erp
     enabled: true
     endpoints:
-     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+     - $[[env.ELASTICSEARCH_ENDPOINT]]
   - name: es3-mall
     enabled: true
     endpoints:
-     - $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+     - $[[env.ELASTICSEARCH_ENDPOINT]]

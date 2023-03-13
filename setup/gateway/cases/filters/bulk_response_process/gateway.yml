@@ -29,5 +29,5 @@ router:
 
 elasticsearch:
   - name: prod
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
     enabled: true

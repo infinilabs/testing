@@ -5,10 +5,10 @@ progress_bar.enabled: true
 elasticsearch:
   - name: source
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
   - name: target
     enabled: true
-    endpoint: $[[env.LR_ELASTICSEARCH_ENDPOINT]]
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
 
 entry:
   - name: es_entry
