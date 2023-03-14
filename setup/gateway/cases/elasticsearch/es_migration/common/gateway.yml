@@ -1,6 +1,7 @@
 path.data: data
 path.logs: log
 progress_bar.enabled: true
+configs.auto_reload: true
 
 elasticsearch:
   - name: source
