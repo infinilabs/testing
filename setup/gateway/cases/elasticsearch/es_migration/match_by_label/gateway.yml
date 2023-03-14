@@ -1,0 +1,88 @@
+path.data: data
+path.logs: log
+progress_bar.enabled: true
+configs.auto_reload: true
+
+elasticsearch:
+  - name: source
+    enabled: true
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
+  - name: target
+    enabled: true
+    endpoint: $[[env.ELASTICSEARCH_ENDPOINT]]
+
+entry:
+  - name: es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 10000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: default-flow
+    filter:
+      - switch:
+          remove_prefix: false
+          path_rules:
+            - prefix: "sleep"
+              flow: sleep
+      - flow:
+          flows:
+            - es-flow
+  - name: es-flow
+    filter:
+      - elasticsearch:
+          elasticsearch: source
+  - name: sleep
+    filter:
+      - sleep:
+          sleep_in_million_seconds: 2000
+      - echo:
+          message: ok
+
+router:
+  - name: my_router
+    default_flow: default-flow
+
+pipeline:
+  - name: source_scroll
+    auto_start: true
+    keep_running: true
+    processor:
+      - es_scroll:
+          slice_size: 2
+          batch_size: 5000
+          indices: "es_migration-test"
+          elasticsearch: source
+          queue:
+            name: source_index_dump
+            labels:
+              task_id: abc
+          partition_size: 20
+          scroll_time: "5m"
+          index_rename:
+            "*": "es_migration-test-new"
+          remove_type: true
+
+  - name: target_indexing
+    auto_start: true
+    keep_running: true
+    processor:
+      - bulk_indexing:
+          elasticsearch: target
+          max_worker_size: 10
+          detect_interval: 100
+          bulk:
+            compress: true
+            batch_size_in_mb: 20
+            batch_size_in_docs: 1
+            invalid_queue: bulk_indexing_400
+          queues:
+            task_id: abc
+          consumer:
+            fetch_max_messages: 1000
+
+disk_queue:
+  sync_timeout_in_ms: 10000
+  sync_every_records: 10000
