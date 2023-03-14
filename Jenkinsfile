@@ -36,6 +36,16 @@ pipeline {
             }
           }
         }
+        stage('Testing Loadgen') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+              sh label: 'testing-loadgen', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/loadgen-uat.yml'
+            }
+          }
+        }
         stage('Benchmarking Gateway') {
           agent {
             label 'linux'
