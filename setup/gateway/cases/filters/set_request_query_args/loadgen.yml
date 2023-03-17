@@ -9,5 +9,5 @@ requests:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test1?size=10000
     assert:
-      equals:
-        _ctx.response.body_json.size: 10
+      contains:
+        _ctx.response.body: 'size=10 '

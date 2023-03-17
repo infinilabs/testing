@@ -16,7 +16,7 @@ flow:
           args:
             - size -> 10
       - echo:
-          message: '{"size": $[[_ctx.request.query_args.size]]}'
+          message: $[[_ctx.request.to_string]]
 
 router:
   - name: my_router
