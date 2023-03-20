@@ -26,34 +26,36 @@ pipeline {
     }
     stage('Running Testing Suites') {
       parallel {
-        stages('Testing Gateway') {
-          stage('Testing Gateway against Elasticsearch 7.10.2') {
-            agent {
-              label 'linux'
-            }
-            steps {
-              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml'
+        stage('Testing Gateway') {
+          stages {
+            stage('Testing Gateway against Elasticsearch 7.10.2') {
+              agent {
+                label 'linux'
+              }
+              steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml'
+                }
               }
             }
-          }
-          stage('Testing Gateway against Elasticsearch 8.6.x') {
-            agent {
-              label 'linux'
-            }
-            steps {
-              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es86.yml'
+            stage('Testing Gateway against Elasticsearch 8.6.x') {
+              agent {
+                label 'linux'
+              }
+              steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es86.yml'
+                }
               }
             }
-          }
-          stage('Testing Gateway against EasySearch 1.0') {
-            agent {
-              label 'linux'
-            }
-            steps {
-              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-easysearch.yml'
+            stage('Testing Gateway against EasySearch 1.0') {
+              agent {
+                label 'linux'
+              }
+              steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-easysearch.yml'
+                }
               }
             }
           }
