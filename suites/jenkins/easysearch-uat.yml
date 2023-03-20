@@ -4,7 +4,7 @@ path.logs: suites/jenkins/easysearch-uat/log
 env:
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
-  ES_ENDPOINT: https://192.168.3.185:9215
+  ES_ENDPOINT: https://192.168.3.185:19204
   ES_USERNAME: admin
   ES_PASSWORD: admin
 tests:
