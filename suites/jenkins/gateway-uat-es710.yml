@@ -1,5 +1,5 @@
-path.data: suites/jenkins/gateway-uat/data
-path.logs: suites/jenkins/gateway-uat/log
+path.data: suites/jenkins/gateway-uat-es710/data
+path.logs: suites/jenkins/gateway-uat-es710/log
 
 env:
   LR_GATEWAY_HOST: 0.0.0.0:18000
