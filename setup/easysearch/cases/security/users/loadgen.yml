@@ -63,8 +63,8 @@ requests:
       body: |
         {
           "password": "adminpass",
-          "security_roles": ["test-user-role"],
-          "backend_roles": ["admin"],
+          "roles": ["test-user-role"],
+          "external_roles": ["admin"],
           "attributes": {
             "attribute1": "value1",
             "attribute2": "value2"
@@ -92,8 +92,8 @@ requests:
       body: |
         {
           "password": "adminpass2",
-          "security_roles": ["test-user-role"],
-          "backend_roles": ["admin"],
+          "roles": ["test-user-role"],
+          "external_roles": ["admin"],
           "attributes": {
             "attribute1": "value1",
             "attribute2": "value2"
@@ -121,10 +121,10 @@ requests:
       body: |
         [
           {
-            "op": "replace", "path": "/backend_roles", "value": ["klingons"]
+            "op": "replace", "path": "/external_roles", "value": ["klingons"]
           },
           {
-            "op": "replace", "path": "/security_roles", "value": ["ship_manager"]
+            "op": "replace", "path": "/roles", "value": ["ship_manager"]
           },
           {
             "op": "replace", "path": "/attributes", "value": { "newattribute": "newvalue" }
@@ -152,7 +152,7 @@ requests:
       body: |
         [
           {
-            "op": "add", "path": "/worf", "value": { "password": "testpassword2", "backend_roles": ["testrole2"] }
+            "op": "add", "path": "/worf", "value": { "password": "testpassword2", "external_roles": ["testrole2"] }
           },
           {
             "op": "remove", "path": "/test-user"

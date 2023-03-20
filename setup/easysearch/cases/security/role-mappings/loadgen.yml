@@ -62,7 +62,7 @@ requests:
         password: $[[env.ES_PASSWORD]]
       body: |
         {
-          "backend_roles" : [ "admin" ],
+          "external_roles" : [ "admin" ],
           "users" : [ "rolemap-user" ]
         }
     assert:
@@ -103,7 +103,7 @@ requests:
         password: $[[env.ES_PASSWORD]]
       body: |
         {
-          "backend_roles" : [ "admin" ],
+          "external_roles" : [ "admin" ],
           "users" : [ "rolemap-user" ]
         }
     assert:
@@ -118,7 +118,7 @@ requests:
         password: $[[env.ES_PASSWORD]]
       body: |
         {
-          "backend_roles" : [ "admin" ],
+          "external_roles" : [ "admin" ],
           "users" : [ "rolemap-user" ]
         }
     assert:
