@@ -1,0 +1,128 @@
+path.data: suites/jenkins/gateway-uat/data
+path.logs: suites/jenkins/gateway-uat/log
+
+env:
+  LR_GATEWAY_HOST: 0.0.0.0:18000
+  LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
+  LR_GATEWAY_API_HOST: localhost:19000
+  LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
+  LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
+  ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19201
+  MINIO_API_HOST: 192.168.3.185:19000
+  MINIO_API_USERNAME: minioadmin
+  MINIO_API_PASSWORD: minioadmin
+  MINIO_TEST_BUCKET: jenkins-test-data
+  GATEWAY_FLOATING_IP_HOST: 192.168.3.234:18000
+tests:
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-with-cache
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-with-cache-plus
+  - path: setup/gateway/cases/echo/hello_world
+  - path: setup/gateway/cases/echo/echo_with_context
+  - path: setup/gateway/cases/echo/dump_context
+  - path: setup/gateway/cases/common/api
+  - path: setup/gateway/cases/filters/basic_auth
+  - path: setup/gateway/cases/filters/bulk_request_mutate
+  - path: setup/gateway/cases/filters/bulk_reshuffle
+  - path: setup/gateway/cases/filters/cache
+  - path: setup/gateway/cases/filters/clone
+  - path: setup/gateway/cases/filters/context_filter
+  - path: setup/gateway/cases/filters/context_limiter
+  - path: setup/gateway/cases/filters/drop
+  - path: setup/gateway/cases/filters/dump
+  - path: setup/gateway/cases/filters/echo
+  - path: setup/gateway/cases/filters/context_regex_replace
+  - path: setup/gateway/cases/filters/date_range_precision_tuning
+  - path: setup/gateway/cases/filters/flow
+  - path: setup/gateway/cases/filters/http
+  - path: setup/gateway/cases/filters/javascript
+  - path: setup/gateway/cases/filters/queue
+  - path: setup/gateway/cases/filters/ratio
+  - path: setup/gateway/cases/filters/record
+  - path: setup/gateway/cases/filters/redirect
+  - path: setup/gateway/cases/filters/request_body_json_del
+  - path: setup/gateway/cases/filters/request_body_json_set
+  - path: setup/gateway/cases/filters/request_body_regex_replace
+  - path: setup/gateway/cases/filters/request_api_key_filter
+  - path: setup/gateway/cases/filters/request_api_key_limiter
+  - path: setup/gateway/cases/filters/request_header_filter
+  - path: setup/gateway/cases/filters/request_method_filter
+  - path: setup/gateway/cases/filters/request_path_filter
+  - path: setup/gateway/cases/filters/request_path_limiter
+  - path: setup/gateway/cases/filters/request_user_filter
+  - path: setup/gateway/cases/filters/request_user_limiter
+  - path: setup/gateway/cases/filters/response_body_regex_replace
+  - path: setup/gateway/cases/filters/response_header_filter
+  - path: setup/gateway/cases/filters/response_header_format
+  - path: setup/gateway/cases/filters/response_status_filter
+  - path: setup/gateway/cases/filters/sample
+  - path: setup/gateway/cases/filters/set_basic_auth
+  # - path: setup/gateway/cases/filters/set_context
+  - path: setup/gateway/cases/filters/set_hostname
+  - path: setup/gateway/cases/filters/set_request_header
+  # - path: setup/gateway/cases/filters/set_request_query_args
+  - path: setup/gateway/cases/filters/set_response
+  - path: setup/gateway/cases/filters/sleep
+  - path: setup/gateway/cases/filters/switch
+  - path: setup/gateway/cases/misc/minio
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-lookup
+  - path: setup/gateway/cases/elasticsearch/elasticsearch-route-by-index
+  - path: setup/gateway/cases/elasticsearch/index-docs-diff
+  - path: setup/gateway/cases/filters/elasticsearch_health_check
+  - path: setup/gateway/cases/filters/logging
+  - path: setup/gateway/cases/filters/retry_limiter
+  - path: setup/gateway/cases/filters/translog
+  - path: setup/gateway/cases/filters/elasticsearch
+  - path: setup/gateway/cases/filters/bulk_response_process
+  - path: setup/gateway/cases/misc/fast_flow_runner
+  - path: setup/gateway/cases/observability/elasticsearch-request-logging
+  - path: setup/gateway/cases/proxy/elasticsearch-proxy
+  - path: setup/gateway/cases/routing/context_switch
+  - path: setup/gateway/cases/routing/cross-cluster-search
+  - path: setup/gateway/cases/routing/indices-replace
+  - path: setup/gateway/cases/routing/router_by_auth
+  - path: setup/gateway/cases/routing/router_by_user
+  - path: setup/gateway/cases/routing/router_rules
+  - path: setup/gateway/cases/routing/404-fallback-to-slave
+  - path: setup/gateway/cases/security/entry-with-tls
+  - path: setup/gateway/cases/security/ip_denied_permitted
+  - path: setup/gateway/cases/security/log4j-request-filter
+  - path: setup/gateway/cases/throttle/bulk_requests_limit
+  - path: setup/gateway/cases/throttle/limit_response_payload_size
+  - path: setup/gateway/cases/throttle/node_level_limit
+  - path: setup/gateway/cases/throttle/throttle_per_read_write
+  - path: setup/gateway/cases/transform/context_parse
+  - path: setup/gateway/cases/transform/convert-search-to-msearch
+  - path: setup/gateway/cases/pipelines/api
+  - path: setup/gateway/cases/pipelines/es_scroll/es_in_processor
+  # FIXME: flaky tests
+  # - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
+  # - path: setup/gateway/cases/elasticsearch/es_migration/common
+  # - path: setup/gateway/cases/elasticsearch/es_migration/bulk_indexing_es_config
+  # - path: setup/gateway/cases/elasticsearch/es_migration/match_by_label
+  # FIXME: need sudo
+  # - path: setup/gateway/cases/misc/floating_ip
+  # FIXME: need access to es data folder
+  # - path: setup/gateway/cases/elasticsearch/index-backup
+  # FIXME: need ldap
+  # - path: setup/gateway/cases/elasticsearch/elasticsearch-with-ldap.yml
+  # - path: setup/gateway/cases/filters/ldap_auth.yml
+  # FIXME: need redis access
+  # - path: setup/gateway/cases/filters/redis_pubsub.yml
+  # FIXME: need multiple hosts/ip
+  # - path: setup/gateway/cases/filters/request_client_ip_filter.yml
+  # - path: setup/gateway/cases/filters/request_client_ip_limiter.yml
+  # - path: setup/gateway/cases/filters/request_host_filter.yml
+  # - path: setup/gateway/cases/filters/request_host_limiter.yml
+  # FIXME: need multiple gateway deployments
+  # - path: setup/gateway/cases/observability/record_and_play.yml
+  # FIXME: need reload function
+  # - path: setup/gateway/cases/reload/echo_test.yml
+  # - path: setup/gateway/cases/reload/es1.yml
+  # - path: setup/gateway/cases/reload/helloworld.yml
+  # FIXME: very complicated scenario
+  # - path: setup/gateway/cases/replication/replication_nonstop-search.yml
+  # - path: setup/gateway/cases/replication/replication_nonstop-write.yml
+  # - path: setup/gateway/cases/replication/replication_simple.yml
+  # - path: setup/gateway/cases/replication/replication_via-kafka.yml # also needs kafka deployment
+  # FIXME: need to support env.* in config.templates
+  # - path: setup/gateway/cases/template/config_template
