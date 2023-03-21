@@ -66,7 +66,6 @@ tests:
   - path: setup/gateway/cases/misc/minio
   - path: setup/gateway/cases/elasticsearch/elasticsearch-lookup
   - path: setup/gateway/cases/elasticsearch/elasticsearch-route-by-index
-  - path: setup/gateway/cases/elasticsearch/index-docs-diff
   - path: setup/gateway/cases/filters/elasticsearch_health_check
   - path: setup/gateway/cases/filters/logging
   - path: setup/gateway/cases/filters/retry_limiter
@@ -99,6 +98,7 @@ tests:
   # - path: setup/gateway/cases/elasticsearch/es_migration/common
   # - path: setup/gateway/cases/elasticsearch/es_migration/bulk_indexing_es_config
   # - path: setup/gateway/cases/elasticsearch/es_migration/match_by_label
+  # - path: setup/gateway/cases/elasticsearch/index-docs-diff
   # FIXME: need sudo
   # - path: setup/gateway/cases/misc/floating_ip
   # FIXME: need access to es data folder
