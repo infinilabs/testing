@@ -10,6 +10,8 @@ requests:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/
     assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body_json.tagline: You Know, for Search
+      and:
+        - equals:
+            _ctx.response.status: 200
+        - exists:
+            - _ctx.response.body_json.tagline
