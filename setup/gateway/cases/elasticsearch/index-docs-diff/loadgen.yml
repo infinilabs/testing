@@ -31,7 +31,7 @@ requests:
     assert:
       equals:
         _ctx.response.status: 200
-        _ctx.response.body: 'ok'
+        _ctx.response.body: "ok"
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/diff_result/_refresh
@@ -42,9 +42,9 @@ requests:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/diff_result/_search?pretty
     assert:
-      - equals:
-          _ctx.response.status: 200
-          _ctx.response.body_json.hits.total.value: 2
+      equals:
+        _ctx.response.status: 200
+        _ctx.response.body_json.hits.total.value: 2
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/test-1

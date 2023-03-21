@@ -12,8 +12,8 @@ requests:
 
     assert:
       and:
-        not:
-          exists:
-            - _ctx.response.body_json.query.bool.should
-        exists:
-          - _ctx.response.body_json.query.bool.must
+        - not:
+            exists:
+              - _ctx.response.body_json.query.bool.should
+        - exists:
+            - _ctx.response.body_json.query.bool.must

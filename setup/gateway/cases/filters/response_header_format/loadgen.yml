@@ -10,7 +10,7 @@ requests:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test1
     assert:
-      - equals:
+      equals:
         _ctx.response.status: 200
-        _ctx.response.body: 'hello'
-        _ctx.response.header.infini-cache: CACHE
+        _ctx.response.body: "hello"
+        _ctx.response.header.infini-cache: CACHED
