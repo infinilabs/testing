@@ -56,10 +56,10 @@ tests:
   - path: setup/gateway/cases/filters/response_status_filter
   - path: setup/gateway/cases/filters/sample
   - path: setup/gateway/cases/filters/set_basic_auth
-  # - path: setup/gateway/cases/filters/set_context
+  - path: setup/gateway/cases/filters/set_context
   - path: setup/gateway/cases/filters/set_hostname
   - path: setup/gateway/cases/filters/set_request_header
-  # - path: setup/gateway/cases/filters/set_request_query_args
+  - path: setup/gateway/cases/filters/set_request_query_args
   - path: setup/gateway/cases/filters/set_response
   - path: setup/gateway/cases/filters/sleep
   - path: setup/gateway/cases/filters/switch
