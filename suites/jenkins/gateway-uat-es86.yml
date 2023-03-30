@@ -93,9 +93,9 @@ tests:
   - path: setup/gateway/cases/transform/convert-search-to-msearch
   - path: setup/gateway/cases/pipelines/api
   - path: setup/gateway/cases/pipelines/es_scroll/es_in_processor
+  - path: setup/gateway/cases/elasticsearch/es_migration/common
   # FIXME: flaky tests
   # - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
-  # - path: setup/gateway/cases/elasticsearch/es_migration/common
   # - path: setup/gateway/cases/elasticsearch/es_migration/bulk_indexing_es_config
   # - path: setup/gateway/cases/elasticsearch/es_migration/match_by_label
   # - path: setup/gateway/cases/elasticsearch/index-docs-diff
