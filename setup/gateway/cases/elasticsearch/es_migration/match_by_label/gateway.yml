@@ -3,6 +3,11 @@ path.logs: log
 progress_bar.enabled: true
 configs.auto_reload: true
 
+api:
+  enabled: true
+  network:
+    binding: $[[env.LR_GATEWAY_API_HOST]]
+
 elasticsearch:
   - name: source
     enabled: true
@@ -37,7 +42,7 @@ flow:
   - name: sleep
     filter:
       - sleep:
-          sleep_in_million_seconds: 2000
+          sleep_in_million_seconds: 1000
       - echo:
           message: ok
 
@@ -47,8 +52,8 @@ router:
 
 pipeline:
   - name: source_scroll
-    auto_start: true
-    keep_running: true
+    auto_start: false
+    keep_running: false
     processor:
       - es_scroll:
           slice_size: 2
@@ -66,12 +71,13 @@ pipeline:
           remove_type: true
 
   - name: target_indexing
-    auto_start: true
-    keep_running: true
+    auto_start: false
+    keep_running: false
     processor:
       - bulk_indexing:
           elasticsearch: target
           max_worker_size: 10
+          detect_active_queue: false
           detect_interval: 100
           bulk:
             compress: true

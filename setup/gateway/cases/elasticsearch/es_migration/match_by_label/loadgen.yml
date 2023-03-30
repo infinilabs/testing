@@ -8,30 +8,28 @@ requests:
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
-      body: '
-{
-"model": "Porshe",
-"year": 1972,
-"engine": "2.0-liter four-cylinder Macan 1",
-"horsepower": "252hp",
-"genres": ["Sporty", "Classic"]
-}
-        '
+      body: |
+        {
+        "model": "Porshe",
+        "year": 1972,
+        "engine": "2.0-liter four-cylinder Macan 1",
+        "horsepower": "252hp",
+        "genres": ["Sporty", "Classic"]
+        }
     assert:
       equals:
         _ctx.response.status: 201
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
-      body: '
-{
-"model": "Porshe",
-"year": 1972,
-"engine": "2.0-liter four-cylinder Macan 2",
-"horsepower": "252hp",
-"genres": ["Sporty", "Classic"]
-}
-        '
+      body: |
+        {
+        "model": "Porshe",
+        "year": 1972,
+        "engine": "2.0-liter four-cylinder Macan 2",
+        "horsepower": "252hp",
+        "genres": ["Sporty", "Classic"]
+        }
     assert:
       equals:
         _ctx.response.status: 201
@@ -47,12 +45,23 @@ requests:
         - contains:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
   - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      method: POST
+      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/source_scroll/_start
     assert:
       equals:
         _ctx.response.status: 200
-        _ctx.response.body: ok
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - request:
+      method: POST
+      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/target_indexing/_start
+    assert:
+      equals:
+        _ctx.response.status: 200
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh
