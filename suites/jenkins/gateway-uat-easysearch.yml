@@ -7,6 +7,7 @@ env:
   LR_GATEWAY_API_HOST: localhost:19002
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
+  SUITES_NAME: gateway-uat-easysearch
   ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19203
   MINIO_API_HOST: 192.168.3.185:19000
   MINIO_API_USERNAME: minioadmin

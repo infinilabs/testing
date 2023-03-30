@@ -1,5 +1,5 @@
-path.data: data
-path.logs: log
+path.data: $[[env.SUITES_NAME]]/data
+path.logs: $[[env.SUITES_NAME]]/log
 
 api:
   enabled: true
