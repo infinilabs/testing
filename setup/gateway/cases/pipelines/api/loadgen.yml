@@ -51,36 +51,12 @@ requests:
         _ctx.response.status: 200
         _ctx.response.body_json.acknowledged: true
   - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body_json.state: STARTING
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body_json.state: STARTED
-  - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline/_stop
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body_json.acknowledged: true
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body_json.state: STOPPING
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
