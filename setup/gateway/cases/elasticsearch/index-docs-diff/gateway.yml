@@ -22,7 +22,7 @@ flow:
   - name: sleep
     filter:
       - sleep:
-          sleep_in_million_seconds: 1500
+          sleep_in_million_seconds: 2000
       - echo:
           message: 'ok'
 
