@@ -6,9 +6,6 @@ api:
   network:
     binding: $[[env.LR_GATEWAY_API_HOST]]
 
-#show progress bar
-#progress_bar.enabled: true
-#
 entry:
   - name: my_es_entry
     enabled: true
@@ -25,7 +22,7 @@ flow:
   - name: sleep
     filter:
       - sleep:
-          sleep_in_million_seconds: 10000
+          sleep_in_million_seconds: 1500
       - echo:
           message: 'ok'
 
@@ -65,7 +62,7 @@ pipeline:
 #              query_string: "_id:c8es70pu46lgfdgmja9g-1646117763293610802-2"
 #              fields: "doc_hash"
               output_queue: "source_docs"
-              batch_size: 5000
+              batch_size: 1
               slice_size: 1
 #              hash_func: "xxhash64"
           - dump_hash: #dump es2's doc
@@ -73,7 +70,7 @@ pipeline:
               scroll_time: "10m"
 #              fields: "doc_hash"
 #              query_string: "_id:c8es70pu46lgfdgmja9g-1646117763293610802-2"
-              batch_size: 5000
+              batch_size: 1
               slice_size: 1
 #              hash_func: "xxhash64"
               elasticsearch: "target"
@@ -86,11 +83,11 @@ pipeline:
               source_queue: 'source_docs'
               target_queue: 'target_docs'
   - name: diff_result_ingest
-    auto_start: true
-    keep_running: true
+    auto_start: false
+    keep_running: false
     processor:
       - json_indexing:
+          idle_timeout_in_seconds: 1
           index_name: "diff_result"
           elasticsearch: "source"
           input_queue: "diff_result"
-

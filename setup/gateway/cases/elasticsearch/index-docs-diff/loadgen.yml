@@ -6,6 +6,15 @@ runner:
   assert_error: true
 requests:
   - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/diff_result
+  - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/test-1
+  - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/test-2
+  - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/test-1/_doc?refresh
       body: '{"test":"abc"}'
@@ -28,10 +37,15 @@ requests:
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - request:
+      method: POST
+      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/diff_result_ingest/_start
     assert:
       equals:
         _ctx.response.status: 200
-        _ctx.response.body: "ok"
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/diff_result/_refresh
