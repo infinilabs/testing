@@ -16,7 +16,7 @@ flow:
           pattern: '"size":10000'
           to: '"size":100'
       - echo:
-          message: $[[_ctx.request.body]]
+          message: $[[_ctx.request.to_string]]
 
 router:
   - name: my_router

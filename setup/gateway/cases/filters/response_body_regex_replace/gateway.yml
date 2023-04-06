@@ -17,6 +17,9 @@ flow:
       - response_body_regex_replace:
           pattern: infini
           to: world
+      - response_body_regex_replace:
+          pattern: hello
+          to: nice
 
 router:
   - name: my_router
