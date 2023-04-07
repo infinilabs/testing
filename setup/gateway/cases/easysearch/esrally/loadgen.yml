@@ -10,15 +10,29 @@ requests:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/
     assert:
-      equals:
-        _ctx.response.body_json.tagline: You Know, for Search
-        _ctx.response.body_json.version.build_flavor: default
-        _ctx.response.body_json.version.number: '7.14.0'
-        _ctx.response.header.X-elastic-product: 'Elasticsearch'
+      and:
+        - equals:
+            _ctx.response.body_json.tagline: You Know, for Search
+            _ctx.response.body_json.version.build_flavor: default
+            _ctx.response.body_json.version.number: '7.14.0'
+        - or:
+            # 8.6.0
+            - equals:
+                _ctx.response.header.X-elastic-product: 'Elasticsearch'
+            # 7.10.x easysearch
+            - equals:
+                _ctx.response.header.x-elastic-product: 'Elasticsearch'
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/any-index
     assert:
-      equals:
-        _ctx.response.status: 404
-        _ctx.response.header.X-elastic-product: 'Elasticsearch'
+      and:
+        - equals:
+            _ctx.response.status: 404
+        - or:
+            # 8.6.0
+            - equals:
+                _ctx.response.header.X-elastic-product: 'Elasticsearch'
+            # 7.10.x easysearch
+            - equals:
+                _ctx.response.header.x-elastic-product: 'Elasticsearch'
