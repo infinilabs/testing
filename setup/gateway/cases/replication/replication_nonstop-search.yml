@@ -2,6 +2,7 @@ env:
   #gateway
   GATEWAY_HOST: 0.0.0.0:18000
   GATEWAY_TLS_ENABLED: false
+  ENFORCE_BULK_REQUESTS_ONLY: true #when this set to `true`, index delete, reindex, update_by_query, delete_by_query are not allowed.
 
   #api
   API_HOST: 0.0.0.0:12900
@@ -568,16 +569,19 @@ router:
   - name: my_router
     default_flow: primary-write-flow
     tracing_flow: request_logging
+    rule_toggle_enabled: true
     rules:
       - method:
           - "GET"
           - "HEAD"
         pattern:
           - "/{any:*}"
+        enabled: true
         flow:
           - primary-read-flow
       - method:
           - "*"
+        enabled: true
         pattern:
           - "/_cat"
           - "/_sql"
@@ -596,6 +600,7 @@ router:
           - primary-read-flow
       - method:
           - "*"
+        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
         pattern:
           - "/_reindex"
           - "/_delete_by_query"
@@ -607,6 +612,7 @@ router:
           - deny_flow
       - method:
           - "DELETE"
+        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
         pattern:
           - "/{any_index}"
           - "/{any_index}/{any_type}"
