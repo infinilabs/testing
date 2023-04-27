@@ -1,0 +1,43 @@
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST1]]/
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+        - equals:
+            _ctx.response.body: 'hello world'
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST2]]/
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+        - equals:
+            _ctx.response.body: 'hello toggled'
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST3]]/
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+        - equals:
+            _ctx.response.body: 'hello toggled'
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST4]]/
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+        - equals:
+            _ctx.response.body: 'hello world'
