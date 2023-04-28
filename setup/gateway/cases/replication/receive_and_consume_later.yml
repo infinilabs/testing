@@ -35,7 +35,7 @@ env:
   FLOATING_IP_INTERFACE: eth1
 
   #primary
-  PRIMARY_ENDPOINT: http://192.168.3.185:29200
+  PRIMARY_ENDPOINT: http://192.168.3.185:9200
   PRIMARY_USERNAME: elastic
   PRIMARY_PASSWORD: elastic
   PRIMARY_MAX_QPS_PER_NODE: 10000
@@ -45,7 +45,7 @@ env:
   PRIMARY_DISCOVERY_REFRESH_ENABLED: false
 
   #backup
-  BACKUP_ENDPOINT: http://192.168.3.185:39200
+  BACKUP_ENDPOINT: http://192.168.3.185:9201
   BACKUP_USERNAME: elastic
   BACKUP_PASSWORD: elastic
   BACKUP_MAX_QPS_PER_NODE: 10000
@@ -217,58 +217,13 @@ flow:
 
   - name: primary-write-flow #正常的主写流程
     filter:
-      - flow:
-          flows:
-#            - auth-flow
-#            - limit_write_tps
-#            - limit_body_size
-            - bulking_indexing_limit
-      - if:
-          or:
-            - consumer_has_lag:
-                queue: "primary-failure"
-                group: primary
-                name: primary-failure
-            - not:
-                cluster_available: ["primary"]
-        then: #集群可用但是集群有堆积的情况，不处理客户端请求，待服务恢复之后再提供服务
-          - flow:
-              flows:
-                - primary-on-failure-write-flow
-        else: # 集群不可用或者集群可用且没有堆积的情况，都直接转发给集群先处理
-          - bulk_request_mutate: #修复自动生成 id 的文档，主动生成 id
-              fix_null_id: true
-              fix_null_type: true
-              default_type: _doc
-#              type_rename:
-#                "*": _doc #统一索引的 Type 类型，适合旧版本多 Type 迁移到新版本集群
-              remove_pipeline: true
-              generate_enhanced_id: true
-          - elasticsearch: #集群可用，直接处理请求
-              elasticsearch: "primary"
-              max_connection_per_node: 1000
-              max_retry_times: 0
-              refresh:
-                enabled: true
-                interval: 30s
-          - bulk_response_process: #bulk 出错不继续执行后续 flow，因为成功、失败、非法的请求都已经入队，可以直接退出
-              success_queue: "backup"
-              failure_queue: "primary-failure" #失败的请求，两边的集群都要做一次，避免脏数据
-              invalid_queue: "primary-invalid"
-              response_handle:
-              retry_rules:
-                default: true
-                retry_429: false
-                retry_4xx: false
-                denied:
-                  status: [ 503 ]
-                  keyword:
-                    - "illegal_state_exception"
-                    - "503 Service Unavailable"
-#                    - '{"error":true,"message":"timeout"}' #timout, but requests may already send to es, need to redo
-          - flow: # 非 bulk 请求继续判断
-              flows:
-                - primary-response-check
+      - queue:
+          queue_name: "backup"
+      - set_response:
+          status: 200
+          content_type: "application/json"
+          body: '{"error":false,"success":true,"acknowledged":true,"hits":{},"found":true}'
+      - drop:
 
   - name: primary-response-check
     filter:
@@ -590,26 +545,26 @@ router:
           - "/{any_index}/_mget"
         flow:
           - primary-read-flow
-      - method:
-          - "*"
-        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
-        pattern:
-          - "/_reindex"
-          - "/_delete_by_query"
-          - "/_update_by_query"
-          - "/{any_index}/_reindex"
-          - "/{any_index}/_delete_by_query"
-          - "/{any_index}/_update_by_query"
-        flow:
-          - deny_flow
-      - method:
-          - "DELETE"
-        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
-        pattern:
-          - "/{any_index}"
-          - "/{any_index}/{any_type}"
-        flow:
-          - deny_flow
+#      - method:
+#          - "*"
+#        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
+#        pattern:
+#          - "/_reindex"
+#          - "/_delete_by_query"
+#          - "/_update_by_query"
+#          - "/{any_index}/_reindex"
+#          - "/{any_index}/_delete_by_query"
+#          - "/{any_index}/_update_by_query"
+#        flow:
+#          - deny_flow
+#      - method:
+#          - "DELETE"
+#        enabled: $[[env.ENFORCE_BULK_REQUESTS_ONLY]]
+#        pattern:
+#          - "/{any_index}"
+#          - "/{any_index}/{any_type}"
+#        flow:
+#          - deny_flow
 
 elasticsearch:
   - name: primary
@@ -773,7 +728,7 @@ pipeline:
             cluster_available: [ "backup" ]
 
   - name: consume-queue_backup-to-backup
-    auto_start: true
+    auto_start: false
     keep_running: true
     processor:
       - flow_runner:
