@@ -3,10 +3,10 @@ path.logs: suites/jenkins/gateway-uat-es710/log
 
 env:
   LR_GATEWAY_HOST: 0.0.0.0:18000
-  LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
+  LR_GATEWAY_CMD: bin/gateway
   LR_GATEWAY_API_HOST: localhost:19000
-  LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
-  LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
+  LR_LOADGEN_CMD: bin/loadgen
+  LR_TEST_DIR: .
   SUITES_NAME: gateway-uat-es710
   ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19201
   MINIO_API_HOST: 192.168.3.185:19000
