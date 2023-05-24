@@ -1,3 +1,7 @@
+env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 entry:
   - name: test_entry
     enabled: true
@@ -27,4 +31,3 @@ elasticsearch:
       max_qps_per_node: 1 #max total requests send to es per node, 1/s
     discovery:
       enabled: false
-

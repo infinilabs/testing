@@ -1,4 +1,8 @@
 env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+env:
   # TODO: this is hard-coded for local test
   ES_DATA_PATH: /Users/kassian/Repository/Garage/elasticsearch-8.6.1
 runner:
