@@ -46,7 +46,7 @@ flow:
   - name: sleep
     filter:
       - sleep:
-          sleep_in_million_seconds: 3000
+          sleep_in_million_seconds: 1500
       - echo:
           message: ok
 
@@ -76,6 +76,7 @@ pipeline:
     keep_running: false
     processor:
       - bulk_indexing:
+          idle_timeout_in_seconds: 1
           elasticsearch: target
           max_worker_size: 10
           detect_active_queue: false

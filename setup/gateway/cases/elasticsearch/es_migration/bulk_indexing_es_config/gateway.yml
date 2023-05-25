@@ -11,7 +11,6 @@ api:
   enabled: true
   network:
     binding: $[[env.LR_GATEWAY_API_HOST]]
-
 elasticsearch:
   - name: source
     enabled: true
@@ -43,7 +42,7 @@ flow:
   - name: sleep
     filter:
       - sleep:
-          sleep_in_million_seconds: 3000
+          sleep_in_million_seconds: 1500
       - echo:
           message: ok
 
@@ -69,10 +68,11 @@ pipeline:
           remove_type: true
 
   - name: target_indexing
-    auto_start: true
-    keep_running: true
+    auto_start: false
+    keep_running: false
     processor:
       - bulk_indexing:
+          idle_timeout_in_seconds: 1
           elasticsearch: target-no-exists
           elasticsearch_config:
             name: target

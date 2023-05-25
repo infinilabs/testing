@@ -10,6 +10,12 @@ runner:
   assert_error: true
 requests:
   - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test
+  - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new
+  - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
       body: |
@@ -54,6 +60,9 @@ requests:
     assert:
       equals:
         _ctx.response.status: 200
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/target_indexing/_start
