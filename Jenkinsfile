@@ -34,7 +34,7 @@ pipeline {
               }
               steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml'
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml || /home/jenkins/bin/notify-feishu.py "[Testing Gateway against Elasticsearch 7.10.2] failed"'
                 }
               }
             }
@@ -44,7 +44,7 @@ pipeline {
               }
               steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es86.yml'
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es86.yml || /home/jenkins/bin/notify-feishu.py "[Testing Gateway against Elasticsearch 8.6.x] failed" '
                 }
               }
             }
@@ -54,7 +54,7 @@ pipeline {
               }
               steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-easysearch.yml'
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-easysearch.yml || /home/jenkins/bin/notify-feishu.py "[Testing Gateway against EasySearch 1.0] failed"'
                 }
               }
             }
@@ -66,7 +66,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'testing-loadgen', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/loadgen-uat.yml'
+              sh label: 'testing-loadgen', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/loadgen-uat.yml || /home/jenkins/bin/notify-feishu.py "[Testing Loadgen] failed"'
             }
           }
         }
@@ -76,7 +76,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'benchmark-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-benchmark.yml'
+              sh label: 'benchmark-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-benchmark.yml || /home/jenkins/bin/notify-feishu.py "[Benchmarking Gateway] failed"'
             }
           }
         }
@@ -86,7 +86,7 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-              sh label: 'testing-easysearch', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/easysearch-uat.yml'
+              sh label: 'testing-easysearch', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/easysearch-uat.yml || /home/jenkins/bin/notify-feishu.py "[Testing EasySearch] failed"'
             }
           }
         }
