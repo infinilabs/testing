@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/apm-sab/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/apm-sab/_doc?refresh
       body: '
 {
 "model": "Porshe",
@@ -26,7 +26,7 @@ requests:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/mall-sab/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/mall-sab/_doc?refresh
       body: '
 {
 "model": "Porshe",
@@ -41,7 +41,7 @@ requests:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/other/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/other/_doc?refresh
       body: '
 {
 "model": "Porshe",
@@ -56,7 +56,7 @@ requests:
         _ctx.response.status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/apm-sab/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/apm-sab/_search?pretty
     assert:
       and:
         - equals:
@@ -65,7 +65,7 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 1"'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/mall-sab/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/mall-sab/_search?pretty
     assert:
       and:
         - equals:
@@ -74,7 +74,7 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/other/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/other/_search?pretty
     assert:
       and:
         - equals:
@@ -83,19 +83,19 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 3"'
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/mall-sab
+      url: http://$[[env.GATEWAY_HOST]]/mall-sab
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/apm-sab
+      url: http://$[[env.GATEWAY_HOST]]/apm-sab
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/other
+      url: http://$[[env.GATEWAY_HOST]]/other
     assert:
       equals:
         _ctx.response.status: 200

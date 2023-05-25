@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 env:
   # TODO: this is hard-coded for local test
@@ -14,35 +14,35 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test/_doc
+      url: http://$[[env.GATEWAY_HOST]]/test/_doc
       body: '{"test":"abc"}'
     assert:
       equals:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test/_doc
+      url: http://$[[env.GATEWAY_HOST]]/test/_doc
       body: '{"test":"abc"}'
     assert:
       equals:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test/_doc
+      url: http://$[[env.GATEWAY_HOST]]/test/_doc
       body: '{"test":"abc"}'
     assert:
       equals:
         _ctx.response.status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: 'ok'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.GATEWAY_HOST]]/test
     assert:
       equals:
         _ctx.response.status: 200
@@ -56,7 +56,7 @@ requests:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.GATEWAY_HOST]]/test
     assert:
       equals:
         _ctx.response.status: 200

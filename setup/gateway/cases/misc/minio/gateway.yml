@@ -1,11 +1,11 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 api:
   enabled: true
   network:
-    binding: $[[env.LR_GATEWAY_API_HOST]]
+    binding: $[[env.GATEWAY_API_HOST]]
 
 node:
   id: cfkr9215k34l5enovsng # NOTE: need to align with the one in loadgen.yml
@@ -16,7 +16,7 @@ entry:
     router: my_router
     max_concurrency: 2000
     network:
-      binding: $[[env.LR_GATEWAY_HOST]]
+      binding: $[[env.GATEWAY_HOST]]
 
 flow:
   - name: test

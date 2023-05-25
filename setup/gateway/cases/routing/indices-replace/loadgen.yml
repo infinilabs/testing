@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -12,28 +12,28 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/_search
+      url: http://$[[env.GATEWAY_HOST]]/_search
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: /_search
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abc/_search
+      url: http://$[[env.GATEWAY_HOST]]/abc/_search
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: /cluster01:abc,cluster02:abc,cluster03:abc/_search
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abc,efg/_search
+      url: http://$[[env.GATEWAY_HOST]]/abc,efg/_search
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: /cluster01:abc,cluster02:abc,cluster03:abc,cluster01:efg,cluster02:efg,cluster03:efg/_search
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/efg,hij,xyz/_search
+      url: http://$[[env.GATEWAY_HOST]]/efg,hij,xyz/_search
     assert:
       equals:
         _ctx.response.status: 200

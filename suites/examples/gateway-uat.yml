@@ -1,7 +1,7 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_CMD: /Users/kassian/Workspace/infini/src/infini.sh/gateway/bin/gateway
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_CMD: /Users/kassian/Workspace/infini/src/infini.sh/gateway/bin/gateway
+  GATEWAY_API_HOST: 127.0.0.1:9000
   LR_LOADGEN_CMD: /Users/kassian/Workspace/infini/src/infini.sh/loadgen/bin/loadgen
   LR_TEST_DIR: .
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:19200

@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_doc
+      url: http://$[[env.GATEWAY_HOST]]/abcd/_doc
       body: '
 {
 "model": "Porshe",
@@ -26,31 +26,31 @@ requests:
         _ctx.response.status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search
+      url: http://$[[env.GATEWAY_HOST]]/abcd/_search
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=true
+      url: http://$[[env.GATEWAY_HOST]]/abcd/_search?no_cache=true
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=false
+      url: http://$[[env.GATEWAY_HOST]]/abcd/_search?no_cache=false
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd/_search?no_cache=true&size=1
+      url: http://$[[env.GATEWAY_HOST]]/abcd/_search?no_cache=true&size=1
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/abcd
+      url: http://$[[env.GATEWAY_HOST]]/abcd
     assert:
       equals:
         _ctx.response.status: 200

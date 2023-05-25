@@ -1,12 +1,12 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 env:
-  LR_GATEWAY_HOST1: 0.0.0.0:8000
-  LR_GATEWAY_HOST2: 0.0.0.0:8002
-  LR_GATEWAY_HOST3: 0.0.0.0:8003
-  LR_GATEWAY_HOST4: 0.0.0.0:8004
+  GATEWAY_HOST1: 0.0.0.0:8000
+  GATEWAY_HOST2: 0.0.0.0:8002
+  GATEWAY_HOST3: 0.0.0.0:8003
+  GATEWAY_HOST4: 0.0.0.0:8004
 
 path.data: data
 path.logs: log
@@ -17,25 +17,25 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: $[[env.LR_GATEWAY_HOST1]]
+      binding: $[[env.GATEWAY_HOST1]]
   - name: my_es_entry2
     enabled: true
     router: toggle_enabled_router
     max_concurrency: 200000
     network:
-      binding: $[[env.LR_GATEWAY_HOST2]]
+      binding: $[[env.GATEWAY_HOST2]]
   - name: my_es_entry3
     enabled: true
     router: toggle_enabled_router_1
     max_concurrency: 200000
     network:
-      binding: $[[env.LR_GATEWAY_HOST3]]
+      binding: $[[env.GATEWAY_HOST3]]
   - name: my_es_entry4
     enabled: true
     router: toggle_enabled_router_2
     max_concurrency: 200000
     network:
-      binding: $[[env.LR_GATEWAY_HOST4]]
+      binding: $[[env.GATEWAY_HOST4]]
 
 flow:
   - name: hello_world

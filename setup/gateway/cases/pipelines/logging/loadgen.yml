@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,16 +11,16 @@ runner:
 requests:
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/infini_gateway_pipeline_logs
+      url: http://$[[env.GATEWAY_HOST]]/infini_gateway_pipeline_logs
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test-new
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test/_doc?refresh
       body: |
         {
         "model": "Porshe",
@@ -34,7 +34,7 @@ requests:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test/_doc?refresh
       body: |
         {
         "model": "Porshe",
@@ -48,7 +48,7 @@ requests:
         _ctx.response.status: 201
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test/_search?pretty
     assert:
       and:
         - equals:
@@ -59,31 +59,31 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/source_scroll/_start
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/source_scroll/_start
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/target_indexing/_start
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/target_indexing/_start
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test-new/_refresh
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test-new/_search?pretty
     assert:
       and:
         - equals:
@@ -94,22 +94,22 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/infini_gateway_pipeline_logs/_refresh
+      url: http://$[[env.GATEWAY_HOST]]/infini_gateway_pipeline_logs/_refresh
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/infini_gateway_pipeline_logs/_search?pretty
+      url: http://$[[env.GATEWAY_HOST]]/infini_gateway_pipeline_logs/_search?pretty
     assert:
       and:
         - equals:
@@ -120,19 +120,19 @@ requests:
             _ctx.response.body: '"task_id" : "source_scroll"'
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new
+      url: http://$[[env.GATEWAY_HOST]]/es_migration-test-new
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/infini_gateway_pipeline_logs
+      url: http://$[[env.GATEWAY_HOST]]/infini_gateway_pipeline_logs
     assert:
       equals:
         _ctx.response.status: 200

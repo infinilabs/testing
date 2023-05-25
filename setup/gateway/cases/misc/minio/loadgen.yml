@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.GATEWAY_HOST]]/test
       body: '{"test":"abc"}'
     assert:
       equals:
@@ -19,7 +19,7 @@ requests:
         _ctx.response.body: 'ok'
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.GATEWAY_HOST]]/test
       body: '{"test":"abc"}'
     assert:
       equals:
@@ -27,7 +27,7 @@ requests:
         _ctx.response.body: 'ok'
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test
+      url: http://$[[env.GATEWAY_HOST]]/test
       body: '{"test":"abc"}'
     assert:
       equals:
@@ -35,14 +35,14 @@ requests:
         _ctx.response.body: 'ok'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: 'ok'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/disk_test/stats
+      url: http://$[[env.GATEWAY_API_HOST]]/queue/disk_test/stats
     assert:
       equals:
         _ctx.response.status: 200
@@ -57,7 +57,7 @@ requests:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/disk_test
+      url: http://$[[env.GATEWAY_API_HOST]]/queue/disk_test
     assert:
       equals:
         _ctx.response.status: 200

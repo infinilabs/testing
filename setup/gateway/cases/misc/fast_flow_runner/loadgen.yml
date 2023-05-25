@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "index" : { "_index" : "test-bulk", "_id" : "1" } }
         { "a": "b" }
@@ -22,14 +22,14 @@ requests:
             _ctx.response.body_json.success: true
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: ok
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_doc/1
+      url: http://$[[env.GATEWAY_HOST]]/test-bulk/_doc/1
     assert:
       and:
         - equals:
@@ -37,13 +37,13 @@ requests:
             _ctx.response.body_json._index: test-bulk
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk
+      url: http://$[[env.GATEWAY_HOST]]/test-bulk
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/queue/backup
+      url: http://$[[env.GATEWAY_API_HOST]]/queue/backup
     assert:
       equals:
         _ctx.response.status: 200

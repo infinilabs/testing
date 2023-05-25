@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,14 +11,14 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/test1/_doc?refresh
       body: '{ "field1" : "value3" }'
     assert:
       equals:
         _ctx.response.status: 201
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1/_doc?refresh
+      url: http://$[[env.GATEWAY_HOST]]/test1/_doc?refresh
       body: '{ "field1" : "value3" }'
     assert:
       equals:
@@ -26,13 +26,13 @@ requests:
         _ctx.response.body_json.message: '[write] request too frequently.'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "test1", "_id" : "2" } }
         { "field1" : "value3" }
@@ -48,27 +48,27 @@ requests:
         _ctx.response.body_json.message: request body is too large.
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1/_search
+      url: http://$[[env.GATEWAY_HOST]]/test1/_search
     assert:
       and:
         - equals:
             _ctx.response.status: 200
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1/_search
+      url: http://$[[env.GATEWAY_HOST]]/test1/_search
     assert:
       equals:
         _ctx.response.status: 429
         _ctx.response.body_json.message: '[read] request too frequently.'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+      url: http://$[[env.GATEWAY_HOST]]/sleep
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
     assert:
       and:
         - equals:

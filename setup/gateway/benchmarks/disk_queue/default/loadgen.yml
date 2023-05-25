@@ -5,7 +5,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
       body: |
         { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }
         { "create" : { "_index" : "privatizationlog-linklog-a","_type":"_doc", "_id" : "a" } }

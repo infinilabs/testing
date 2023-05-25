@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "bulk_requests_limit-test1", "_id" : "3" } }
         { "field1" : "value3" }
@@ -21,7 +21,7 @@ requests:
             _ctx.response.status: 200
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "bulk_requests_limit-test1", "_id" : "3" } }
         { "field1" : "value3" }
@@ -32,7 +32,7 @@ requests:
             _ctx.response.body: test1 writing too fast。
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
@@ -42,7 +42,7 @@ requests:
             _ctx.response.status: 200
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
@@ -52,7 +52,7 @@ requests:
             _ctx.response.status: 200
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "bulk_requests_limit-test", "_id" : "3" } }
         { "field1" : "value3" }
@@ -63,7 +63,7 @@ requests:
             _ctx.response.body: test writing too fast。
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_msearch
+      url: http://$[[env.GATEWAY_HOST]]/_msearch
       body: |
         { }
         {"query" : {"match" : { "message": "this is a test"}}}
@@ -74,13 +74,13 @@ requests:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/bulk_requests_limit-test
+      url: http://$[[env.GATEWAY_HOST]]/bulk_requests_limit-test
     assert:
       equals:
         _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/bulk_requests_limit-test1
+      url: http://$[[env.GATEWAY_HOST]]/bulk_requests_limit-test1
     assert:
       equals:
         _ctx.response.status: 200

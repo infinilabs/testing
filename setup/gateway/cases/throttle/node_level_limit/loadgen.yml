@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -12,7 +12,7 @@ requests:
   # NOTE: time.RateLimiter will block request at the first second
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "test1", "_id" : "1" } }
         { "field1" : "value3" }
@@ -24,7 +24,7 @@ requests:
             _ctx.elapsed.gte: 1000
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      url: http://$[[env.GATEWAY_HOST]]/_bulk
       body: |
         { "create" : { "_index" : "test1", "_id" : "2" } }
         { "field1" : "value3" }
@@ -34,7 +34,7 @@ requests:
             _ctx.response.status: 200
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
     assert:
       and:
         - equals:

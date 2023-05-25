@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/
+      url: http://$[[env.GATEWAY_HOST]]/
       basic_auth:
         username: cn-jamesyang
         password: pass
@@ -23,7 +23,7 @@ requests:
             _ctx.response.body: hello readonly
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/
+      url: http://$[[env.GATEWAY_HOST]]/
       basic_auth:
         username: cn-devops
         password: pass
@@ -35,7 +35,7 @@ requests:
             _ctx.response.body: hello admin
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/
+      url: http://$[[env.GATEWAY_HOST]]/
       basic_auth:
         username: other-user
         password: pass
@@ -47,7 +47,7 @@ requests:
             _ctx.response.body_json.message: access denied
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/
+      url: http://$[[env.GATEWAY_HOST]]/
     assert:
       and:
         - equals:

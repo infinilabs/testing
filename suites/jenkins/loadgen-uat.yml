@@ -2,9 +2,9 @@ path.data: suites/jenkins/loadgen-uat/data
 path.logs: suites/jenkins/loadgen-uat/log
 
 env:
-  LR_GATEWAY_HOST: 0.0.0.0:18000
-  LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
-  LR_GATEWAY_API_HOST: localhost:19000
+  GATEWAY_HOST: 0.0.0.0:18000
+  GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
+  GATEWAY_API_HOST: localhost:19000
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
 tests:

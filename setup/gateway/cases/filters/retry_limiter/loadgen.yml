@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -12,14 +12,14 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body: '1'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
       headers:
         - Retried_times: 1
       disable_header_names_normalizing: true
@@ -29,7 +29,7 @@ requests:
         _ctx.response.body: '2'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/test1
+      url: http://$[[env.GATEWAY_HOST]]/test1
       headers:
         - Retried_times: 2
       disable_header_names_normalizing: true

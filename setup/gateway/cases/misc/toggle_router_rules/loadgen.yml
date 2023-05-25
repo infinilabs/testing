@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST1]]/
+      url: http://$[[env.GATEWAY_HOST1]]/
     assert:
       and:
         - equals:
@@ -20,7 +20,7 @@ requests:
             _ctx.response.body: 'hello world'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST2]]/
+      url: http://$[[env.GATEWAY_HOST2]]/
     assert:
       and:
         - equals:
@@ -29,7 +29,7 @@ requests:
             _ctx.response.body: 'hello toggled'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST3]]/
+      url: http://$[[env.GATEWAY_HOST3]]/
     assert:
       and:
         - equals:
@@ -38,7 +38,7 @@ requests:
             _ctx.response.body: 'hello toggled'
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_HOST4]]/
+      url: http://$[[env.GATEWAY_HOST4]]/
     assert:
       and:
         - equals:

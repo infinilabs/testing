@@ -2,9 +2,9 @@ path.data: suites/jenkins/gateway-uat-es710/data
 path.logs: suites/jenkins/gateway-uat-es710/log
 
 env:
-  LR_GATEWAY_HOST: 0.0.0.0:18000
-  LR_GATEWAY_CMD: bin/gateway
-  LR_GATEWAY_API_HOST: localhost:19000
+  GATEWAY_HOST: 0.0.0.0:18000
+  GATEWAY_CMD: bin/gateway
+  GATEWAY_API_HOST: localhost:19000
   LR_LOADGEN_CMD: bin/loadgen
   LR_TEST_DIR: .
   SUITES_NAME: gateway-uat-es710

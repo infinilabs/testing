@@ -1,6 +1,6 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
   ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
 runner:
   total_rounds: 1
@@ -11,7 +11,7 @@ runner:
 requests:
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/tasks/
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/tasks/
       body: |
         {
           "name": "test-pipeline",
@@ -42,35 +42,35 @@ requests:
         _ctx.response.body_json.acknowledged: true
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/test-pipeline
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body_json.state: STOPPED
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline/_start
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/test-pipeline/_start
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body_json.acknowledged: true
   - request:
       method: POST
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline/_stop
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/test-pipeline/_stop
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body_json.acknowledged: true
   - request:
       method: DELETE
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/test-pipeline
     assert:
       equals:
         _ctx.response.status: 200
         _ctx.response.body_json.acknowledged: true
   - request:
       method: GET
-      url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/test-pipeline
+      url: http://$[[env.GATEWAY_API_HOST]]/pipeline/task/test-pipeline
     assert:
       equals:
         _ctx.response.status: 404

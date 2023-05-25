@@ -2,9 +2,9 @@ path.data: suites/jenkins/gateway-uat-es86/data
 path.logs: suites/jenkins/gateway-uat-es86/log
 
 env:
-  LR_GATEWAY_HOST: 0.0.0.0:18001
-  LR_GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
-  LR_GATEWAY_API_HOST: localhost:19001
+  GATEWAY_HOST: 0.0.0.0:18001
+  GATEWAY_CMD: /home/jenkins/go/src/infini.sh/testing/bin/gateway
+  GATEWAY_API_HOST: localhost:19001
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
   SUITES_NAME: gateway-uat-es86
