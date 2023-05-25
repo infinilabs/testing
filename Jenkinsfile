@@ -36,7 +36,7 @@ pipeline {
               }
               steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml && exit 1'
+                  sh label: 'testing-gateway', script: 'cd /home/jenkins/go/src/infini.sh/testing && ./bin/loadrun -config ./suites/jenkins/gateway-uat-es710.yml'
                 }
               }
               post {
