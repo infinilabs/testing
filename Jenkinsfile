@@ -40,7 +40,7 @@ pipeline {
                 }
               }
               post {
-                failure {
+                unsuccessful {
                   sh script: '/home/jenkins/bin/notify-feishu.py "[Testing Gateway against Elasticsearch 7.10.2] tests failed" "" "$BUILD_URL"'
                 }
               }
@@ -55,7 +55,7 @@ pipeline {
                 }
               }
               post {
-                failure {
+                unsuccessful {
                   sh script: '/home/jenkins/bin/notify-feishu.py "[Testing Gateway against Elasticsearch 8.6.x] tests failed" "" "$BUILD_URL"'
                 }
               }
@@ -70,7 +70,7 @@ pipeline {
                 }
               }
               post {
-                failure {
+                unsuccessful {
                   sh script: '/home/jenkins/bin/notify-feishu.py "[Testing Gateway against EasySearch 1.0] tests failed" "" "$BUILD_URL"'
                 }
               }
@@ -87,7 +87,7 @@ pipeline {
             }
           }
           post {
-            failure {
+            unsuccessful {
               sh script: '/home/jenkins/bin/notify-feishu.py "[Testing Loadgen] tests failed" "" "$BUILD_URL"'
             }
           }
@@ -102,7 +102,7 @@ pipeline {
             }
           }
           post {
-            failure {
+            unsuccessful {
               sh script: '/home/jenkins/bin/notify-feishu.py "[Benchmarking Gateway] tests failed" "" "$BUILD_URL"'
             }
           }
@@ -117,7 +117,7 @@ pipeline {
             }
           }
           post {
-            failure {
+            unsuccessful {
               sh script: '/home/jenkins/bin/notify-feishu.py "[Testing EasySearch] tests failed" "" "$BUILD_URL"'
             }
           }
@@ -126,7 +126,7 @@ pipeline {
     }
   }
   post {
-    failure {
+    unsuccessful {
       sh script: '/home/jenkins/bin/notify-feishu.py "[testing] jenkins build failed" "" "$BUILD_URL"'
     }
   }
