@@ -1,0 +1,26 @@
+env:
+  GATEWAY_HOST: 127.0.0.1:8001
+  GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+entry:
+  - name: test_entry
+    enabled: true
+    router: default
+    max_concurrency: 20000
+    network:
+      binding: $[[env.GATEWAY_HOST]]
+
+router:
+  - name: default
+    default_flow: default_flow
+
+flow:
+  - name: default_flow
+    filter:
+      - auto_generate_doc_id:
+#      - dump:
+#          request: true
+#          context:
+#            - _ctx.request.header.X-Generated-ID
+      - echo:
+          message: $[[_ctx.request.path]]
