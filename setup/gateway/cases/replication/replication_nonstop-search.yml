@@ -223,6 +223,7 @@ flow:
 #            - limit_write_tps
 #            - limit_body_size
             - bulking_indexing_limit
+      - auto_generate_doc_id: # 处理非 Bulk 请求，但是文档新增，且默认自增 ID 的情况
       - if:
           or:
             - consumer_has_lag:
