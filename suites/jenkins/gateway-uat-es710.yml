@@ -86,6 +86,7 @@ tests:
   - path: setup/gateway/cases/security/entry-with-tls
   - path: setup/gateway/cases/security/ip_denied_permitted
   - path: setup/gateway/cases/security/log4j-request-filter
+  - path: setup/gateway/cases/security/rbac
   - path: setup/gateway/cases/throttle/bulk_requests_limit
   - path: setup/gateway/cases/throttle/limit_response_payload_size
   - path: setup/gateway/cases/throttle/node_level_limit

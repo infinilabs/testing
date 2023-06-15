@@ -1,0 +1,92 @@
+env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: hello_world
+    filter:
+      - rbac:
+          elasticsearch:
+            enabled: true
+            cluster_id: "test-es"
+      - echo:
+          message: "hello"
+  - name: hello_no_es_check
+    filter:
+      - rbac:
+          elasticsearch:
+            enabled: false
+            cluster_id: "test-es"
+      - echo:
+          message: "hello"
+  - name: auth_admin
+    filter:
+      - set_roles:
+          roles:
+            - Administrator
+  - name: auth_other
+    filter:
+      - set_roles:
+          roles:
+            - Other
+
+router:
+  - name: my_router
+    rules:
+      - method:
+          - "*"
+        pattern:
+          - "/auth"
+        flow:
+          - auth_admin
+          - hello_world
+      - method:
+          - "*"
+        pattern:
+          - "/no_role"
+        flow:
+          - hello_world
+      - method:
+          - "*"
+        pattern:
+          - "/no_auth"
+        flow:
+          - auth_other
+          - hello_world
+      - method:
+          - "*"
+        pattern:
+          - "/hello_no_role"
+        flow:
+          - hello_no_es_check
+      - method:
+          - "*"
+        pattern:
+          - "/hello_invalid_role"
+        flow:
+          - auth_other
+          - hello_no_es_check
+
+elastic:
+  elasticsearch: es-server
+  orm:
+    enabled: true
+    init_template: false
+    init_schema: false
+
+elasticsearch:
+  - name: es-server
+    enabled: true
+    endpoints:
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
