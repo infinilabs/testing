@@ -101,6 +101,7 @@ tests:
   - path: setup/gateway/cases/easysearch/esrally
   - path: setup/gateway/cases/auto_reload/elasticsearch
   - path: setup/gateway/cases/auto_reload/flow
+  - path: setup/gateway/cases/auto_reload/router
   # FIXME: flaky tests
   # - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
   # - path: setup/gateway/cases/pipelines/logging
