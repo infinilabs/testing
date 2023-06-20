@@ -99,6 +99,7 @@ tests:
   - path: setup/gateway/cases/elasticsearch/es_migration/match_by_label
   - path: setup/gateway/cases/elasticsearch/index-docs-diff
   - path: setup/gateway/cases/easysearch/esrally
+  - path: setup/gateway/cases/auto_reload/elasticsearch
   # FIXME: flaky tests
   # - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
   # - path: setup/gateway/cases/pipelines/logging
