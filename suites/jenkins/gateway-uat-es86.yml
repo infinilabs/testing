@@ -8,7 +8,7 @@ env:
   LR_LOADGEN_CMD: /home/jenkins/go/src/infini.sh/testing/bin/loadgen
   LR_TEST_DIR: /home/jenkins/go/src/infini.sh/testing
   SUITES_NAME: gateway-uat-es86
-  ELASTICSEARCH_ENDPOINT: http://192.168.3.185:19202
+  ELASTICSEARCH_ENDPOINT: http://192.168.3.185:8610
   MINIO_API_HOST: 192.168.3.185:19000
   MINIO_API_USERNAME: minioadmin
   MINIO_API_PASSWORD: minioadmin
