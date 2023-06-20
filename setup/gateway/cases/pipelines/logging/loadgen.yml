@@ -69,12 +69,8 @@ requests:
     assert:
       equals:
         _ctx.response.status: 200
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 4000
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh
@@ -92,15 +88,8 @@ requests:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 1"'
         - contains:
             _ctx.response.body: '"engine" : "2.0-liter four-cylinder Macan 2"'
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 6000
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/infini_gateway_pipeline_logs/_refresh

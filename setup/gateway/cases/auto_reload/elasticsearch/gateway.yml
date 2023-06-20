@@ -24,22 +24,10 @@ flow:
     filter:
       - elasticsearch:
           elasticsearch: es-server
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: 'ok'
 
 router:
   - name: my_router
     default_flow: es-flow
-    rules:
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 elasticsearch:
   - name: es-server

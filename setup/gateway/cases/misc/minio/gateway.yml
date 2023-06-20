@@ -25,12 +25,6 @@ flow:
           queue_name: disk_test
       - echo:
           message: 'ok'
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: 'ok'
 
 router:
   - name: my_router
@@ -41,11 +35,6 @@ router:
         pattern:
           - /test
         flow: test
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 disk_queue:
   #enabled: true

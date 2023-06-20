@@ -27,11 +27,6 @@ router:
         pattern:
           - /hello
         flow: hello
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 flow:
   - name: hello
@@ -42,9 +37,3 @@ flow:
     filter:
       - echo:
           message: 'hello infini'
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: 'ok'

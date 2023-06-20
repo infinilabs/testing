@@ -20,13 +20,8 @@ requests:
         - equals:
             _ctx.response.status: 200
             _ctx.response.body_json.success: true
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body: ok
+  - sleep:
+      sleep_in_milli_seconds: 1000
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/test-bulk/_doc/1

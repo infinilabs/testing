@@ -31,12 +31,6 @@ flow:
     filter:
       - elasticsearch:
           elasticsearch: 'backup'
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 1000
-      - echo:
-          message: 'ok'
 
 router:
   - name: my_router
@@ -48,11 +42,6 @@ router:
           - /_bulk
           - /{any_index}/_bulk
         flow: primary-write-flow
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 elasticsearch:
   - name: backup

@@ -27,20 +27,9 @@ router:
         pattern:
           - /hello
         flow: hello
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 flow:
   - name: hello
     filter:
       - echo:
           message: 'hello world'
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: 'ok'

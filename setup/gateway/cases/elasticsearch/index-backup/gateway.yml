@@ -18,22 +18,10 @@ flow:
     filter:
       - elasticsearch:
           elasticsearch: dev
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 20000
-      - echo:
-          message: 'ok'
 
 router:
   - name: my_router
     default_flow: test
-    rules:
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 elasticsearch:
   - name: dev

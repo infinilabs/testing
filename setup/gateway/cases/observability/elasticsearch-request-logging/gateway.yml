@@ -42,23 +42,11 @@ flow:
                         _ctx.request.path: ["/sw.js"]
               - range:
                   _ctx.elapsed.gte: 1000
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 20000
-      - echo:
-          message: 'ok'
 
 router:
   - name: my_router
     default_flow: primary-write-flow
     tracing_flow: request_logging
-    rules:
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 elasticsearch:
   - name: es-server #the business server

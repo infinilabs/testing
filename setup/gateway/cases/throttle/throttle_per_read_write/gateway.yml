@@ -42,11 +42,6 @@ router:
           - "/{any_index}/_mget"
         flow:
           - read_flow
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 flow:
   - name: forward_to_es
@@ -92,12 +87,6 @@ flow:
           status: 429
           message: '{"message":"[read] request too frequently."}'
           action: drop
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 1000
-      - echo:
-          message: 'ok'
 
 elasticsearch:
   - name: es-server

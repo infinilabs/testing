@@ -26,11 +26,6 @@ router:
           - /es-710-test/company_basic/_search
         flow:
           - es-710-test_company_basic
-      - method:
-          - GET
-        pattern:
-          - /sleep
-        flow: sleep
 
 elasticsearch:
   - endpoints:
@@ -65,9 +60,3 @@ flow:
         refresh:
           interval: 30s
           enabled: true
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: 'ok'

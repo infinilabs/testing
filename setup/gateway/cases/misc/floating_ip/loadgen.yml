@@ -9,13 +9,8 @@ runner:
   assert_invalid: true
   assert_error: true
 requests:
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body: 'ok'
+  - sleep:
+      sleep_in_milli_seconds: 15000
   - request:
       method: GET
       url: http://$[[env.GATEWAY_FLOATING_IP_HOST]]/test

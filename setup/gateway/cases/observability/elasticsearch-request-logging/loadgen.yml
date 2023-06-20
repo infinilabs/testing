@@ -25,13 +25,8 @@ requests:
       and:
         - equals:
             _ctx.response.status: 201
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      equals:
-        _ctx.response.status: 200
-        _ctx.response.body: ok
+  - sleep:
+      sleep_in_milli_seconds: 20000
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/gateway_requests/_search

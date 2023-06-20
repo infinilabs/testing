@@ -24,12 +24,8 @@ requests:
       equals:
         _ctx.response.status: 429
         _ctx.response.body_json.message: '[write] request too frequently.'
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      equals:
-        _ctx.response.status: 200
+  - sleep:
+      sleep_in_milli_seconds: 2000
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
@@ -60,12 +56,8 @@ requests:
       equals:
         _ctx.response.status: 429
         _ctx.response.body_json.message: '[read] request too frequently.'
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      equals:
-        _ctx.response.status: 200
+  - sleep:
+      sleep_in_milli_seconds: 2000
   - request:
       method: DELETE
       url: http://$[[env.LR_GATEWAY_HOST]]/test1

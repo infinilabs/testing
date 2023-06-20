@@ -21,12 +21,6 @@ flow:
           level: cluster
           partition_size: 3
           fix_null_id: true
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 5000
-      - echo:
-          message: ok
 
   - name: es-flow
     filter:
@@ -55,11 +49,6 @@ router:
           - '/{index_name}/_bulk'
         flow:
           - async_bulk
-      - method: 'GET'
-        pattern:
-          - '/sleep'
-        flow:
-          - sleep
 
 elasticsearch:
   - name: prod

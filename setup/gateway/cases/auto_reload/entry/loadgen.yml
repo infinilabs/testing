@@ -34,9 +34,8 @@ requests:
     assert:
       equals:
         _ctx.response.status: 200
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 5000
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/hello2

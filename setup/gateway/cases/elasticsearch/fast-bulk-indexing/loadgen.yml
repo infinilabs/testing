@@ -10,14 +10,8 @@ runner:
   assert_error: true
 requests:
   # FIXME: now we need to wait for the bulk_reshull process to get ready
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      and:
-        - equals:
-            _ctx.response.status: 200
-            _ctx.response.body: ok
+  - sleep:
+      sleep_in_milli_seconds: 5000
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
@@ -42,14 +36,8 @@ requests:
       and:
         - equals:
             _ctx.response.status: 404
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
-    assert:
-      and:
-        - equals:
-            _ctx.response.status: 200
-            _ctx.response.body: ok
+  - sleep:
+      sleep_in_milli_seconds: 5000
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_refresh

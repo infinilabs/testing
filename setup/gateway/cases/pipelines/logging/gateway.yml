@@ -33,11 +33,6 @@ entry:
 flow:
   - name: default-flow
     filter:
-      - switch:
-          remove_prefix: false
-          path_rules:
-            - prefix: "sleep"
-              flow: sleep
       - flow:
           flows:
             - es-flow
@@ -45,12 +40,6 @@ flow:
     filter:
       - elasticsearch:
           elasticsearch: source
-  - name: sleep
-    filter:
-      - sleep:
-          sleep_in_million_seconds: 2000
-      - echo:
-          message: ok
 
 router:
   - name: my_router

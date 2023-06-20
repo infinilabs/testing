@@ -60,18 +60,16 @@ requests:
     assert:
       equals:
         _ctx.response.status: 200
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 1500
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_API_HOST]]/pipeline/task/target_indexing/_start
     assert:
       equals:
         _ctx.response.status: 200
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 1500
   - request:
       method: POST
       url: http://$[[env.LR_GATEWAY_HOST]]/es_migration-test-new/_refresh

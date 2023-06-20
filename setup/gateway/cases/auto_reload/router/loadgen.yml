@@ -22,15 +22,14 @@ requests:
       body: |
         {
           "configs": {
-            "router": "router:\n  - name: my_router\n    rules:\n      - method:\n          - GET\n        pattern:\n          - /hello\n        flow: hello2\n      - method:\n          - GET\n        pattern:\n          - /sleep\n        flow: sleep\n"
+            "router": "router:\n  - name: my_router\n    rules:\n      - method:\n          - GET\n        pattern:\n          - /hello\n        flow: hello2\n"
           }
         }
     assert:
       equals:
         _ctx.response.status: 200
-  - request:
-      method: GET
-      url: http://$[[env.LR_GATEWAY_HOST]]/sleep
+  - sleep:
+      sleep_in_milli_seconds: 5000
   - request:
       method: GET
       url: http://$[[env.LR_GATEWAY_HOST]]/hello
