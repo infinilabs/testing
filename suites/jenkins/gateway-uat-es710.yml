@@ -122,10 +122,6 @@ tests:
   # - path: setup/gateway/cases/filters/request_host_limiter.yml
   # FIXME: need multiple gateway deployments
   # - path: setup/gateway/cases/observability/record_and_play.yml
-  # FIXME: need reload function
-  # - path: setup/gateway/cases/reload/echo_test.yml
-  # - path: setup/gateway/cases/reload/es1.yml
-  # - path: setup/gateway/cases/reload/helloworld.yml
   # FIXME: very complicated scenario
   # - path: setup/gateway/cases/replication/replication_nonstop-search.yml
   # - path: setup/gateway/cases/replication/replication_nonstop-write.yml
