@@ -103,6 +103,7 @@ tests:
   - path: setup/gateway/cases/auto_reload/flow
   - path: setup/gateway/cases/auto_reload/router
   - path: setup/gateway/cases/auto_reload/es1
+  - path: setup/gateway/cases/auto_reload/entry
   # FIXME: flaky tests
   # - path: setup/gateway/cases/elasticsearch/fast-bulk-indexing
   # FIXME: need sudo
