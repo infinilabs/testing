@@ -1,0 +1,42 @@
+pipeline:
+  - name: send_email
+    auto_start: true
+    keep_running: true
+    retry_delay_in_ms: 5000
+    processor:
+      - consumer:
+          consumer:
+            fetch_max_messages: 1
+          max_worker_size: 200
+          num_of_slices: 1
+          idle_timeout_in_seconds: 30
+          queue_selector:
+            keys:
+              - email_messages
+          processor:
+            - smtp:
+                idle_timeout_in_seconds: 1
+                server:
+                  host: "smtp.ym.163.com"
+                  port: 994
+                  tls:  true
+                auth:
+                  username: "notify-test@infini.ltd"
+                  password: "xxx"
+                sender: "notify-test@infini.ltd"
+                recipients:
+                #                  to: ["Test <medcl@infini.ltd>"]
+                #                  cc: ["INFINI Labs <hello@infini.ltd>"]
+                variables: #default variables, can be used in templates
+                  license_code: "N/A"
+                templates:
+                  trial_license:
+                    subject: "$[[name]] 您好，请查收您的免费授权信息! [INFINI Labs]"
+                    #                    content_type: 'text/plain'
+                    #                    body: "$[[name]] 您好，请查收您的免费授权信息! [INFINI Labs]"
+                    content_type: 'text/html'
+                    body_file: '/Users/medcl/go/src/infini.sh/ops/assets/email_templates/send_trial_license.html'
+#                    attachments: #use cid in html: <img width=100 height=100 id="1" src="cid:myimg1">
+#                      - file: '/Users/medcl/Desktop/WechatIMG2783.png'
+#                        content_type: 'image/png'
+#                        cid: 'myimg1'
