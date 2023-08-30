@@ -9,7 +9,7 @@ env:
 
   #disk_queue
   DISK_QUEUE_COMPRESS_SEGMENT_ENABLED: true
-  DISK_QUEUE_RETENTION_MAX_NUM_OF_LOCAL_FILES: 3
+  DISK_QUEUE_RETENTION_MAX_NUM_OF_LOCAL_FILES: 60
   DISK_QUEUE_UPLOAD_TO_S3: false
 
   #s3
@@ -35,7 +35,7 @@ env:
   FLOATING_IP_INTERFACE: eth1
 
   #primary
-  PRIMARY_ENDPOINT: http://192.168.3.185:29200
+  PRIMARY_ENDPOINT: http://192.168.3.185:17900
   PRIMARY_USERNAME: elastic
   PRIMARY_PASSWORD: elastic
   PRIMARY_MAX_QPS_PER_NODE: 10000
@@ -45,7 +45,7 @@ env:
   PRIMARY_DISCOVERY_REFRESH_ENABLED: false
 
   #backup
-  BACKUP_ENDPOINT: http://192.168.3.185:39200
+  BACKUP_ENDPOINT: http://192.168.3.185:17901
   BACKUP_USERNAME: elastic
   BACKUP_PASSWORD: elastic
   BACKUP_MAX_QPS_PER_NODE: 10000
@@ -62,9 +62,9 @@ env:
   THROTTLE_BULK_INDEXING_RETRY_DELAY_IN_MS: 100 #10
 
   #logging
-  LOGGING_ENDPOINT: http://192.168.3.181:9200
-  LOGGING_USERNAME: elastic
-  LOGGING_PASSWORD: elastic
+  LOGGING_ENDPOINT: http://192.168.3.185:9020
+  LOGGING_USERNAME: admin
+  LOGGING_PASSWORD: admin
   LOGGING_MAX_QPS_PER_NODE: 10000
   LOGGING_MAX_BYTES_PER_NODE: 104857600 #100MB/s
   LOGGING_MAX_CONNECTION_PER_NODE: 200
@@ -222,7 +222,7 @@ flow:
 #            - auth-flow
 #            - limit_write_tps
 #            - limit_body_size
-            - bulking_indexing_limit
+#            - bulking_indexing_limit
       - auto_generate_doc_id: # 处理非 Bulk 请求，但是文档新增，且默认自增 ID 的情况
       - if:
           or:
@@ -486,7 +486,7 @@ flow:
           elasticsearch: "backup"
           queue_name_prefix: "async_bulk"
           level: cluster #cluster,node,index,shard
-          #          partition_size: 3
+          partition_size: 10
           fix_null_id: true
           tag_on_success: ["commit_message_allowed"]
 
@@ -665,54 +665,78 @@ elasticsearch:
 pipeline:
 
   ## system logging and metrics
-  - name: async_messages_merge
+  - name: messages_merge_async_bulk_results
     auto_start: true
     keep_running: true
+    singleton: true
     processor:
-      - indexing_merge:
-          input_queue: "bulk_result_messages"
-          elasticsearch: "logging"
-          index_name: ".infini_async_bulk_results"
-          output_queue:
-            name: "bulk_requests"
-            label:
-              tag: "bulk_logging"
-          worker_size: 1
-          bulk_size_in_mb: 10
-  - name: metrics_merge
+      - consumer:
+          queue_selector:
+            keys:
+              - bulk_result_messages
+          consumer:
+            group: merge_to_bulk
+          processor:
+            - merge_to_bulk:
+                elasticsearch: "logging"
+                index_name: ".infini_async_bulk_results"
+                output_queue:
+                  name: "merged_async_bulk_results"
+                  label:
+                    tag: "bulk_logging"
+                worker_size: 1
+                bulk_size_in_mb: 10
+
+  - name: messages_merge_metrics
     auto_start: true
     keep_running: true
+    singleton: true
     processor:
-      - indexing_merge:
-          input_queue: "metrics"
-          elasticsearch: "logging"
-          index_name: ".infini_metrics"
-          output_queue:
-            name: "bulk_requests"
-            label:
-              tag: "metrics"
-          worker_size: 1
-          bulk_size_in_mb: 10
-  - name: request_logging_merge
+      - consumer:
+          queue_selector:
+            keys:
+              - metrics
+          consumer:
+            group: merge_to_bulk
+          processor:
+            - merge_to_bulk:
+                elasticsearch: "logging"
+                index_name: ".infini_metrics"
+                output_queue:
+                  name: "merged_metrics"
+                  label:
+                    tag: "metrics"
+                worker_size: 1
+                bulk_size_in_mb: 10
+
+  - name: messages_merge_requests_logging
     auto_start: true
     keep_running: true
+    singleton: true
     processor:
-      - indexing_merge:
-          input_queue: "request_logging"
-          elasticsearch: "logging"
-          index_name: ".infini_requests_logging"
-          output_queue:
-            name: "bulk_requests"
-            label:
-              tag: "request_logging"
-          worker_size: 1
-          bulk_size_in_mb: 10
+      - consumer:
+          queue_selector:
+            keys:
+              - request_logging
+          consumer:
+            group: merge_to_bulk
+          processor:
+            - merge_to_bulk:
+                elasticsearch: "logging"
+                index_name: ".infini_requests_logging"
+                output_queue:
+                  name: "merged_requests_logging"
+                  label:
+                    tag: "request_logging"
+                worker_size: 1
+                bulk_size_in_mb: 10
+
   - name: ingest_merged_requests
     auto_start: true
     keep_running: true
     processor:
       - bulk_indexing:
-          num_of_slices: 3 #runtime slicing
+          #          num_of_slices: 3 #runtime slicing
           idle_timeout_in_seconds: 30
           bulk:
             compress: false
@@ -727,12 +751,14 @@ pipeline:
               save_success_results: false
               max_error_details_count: 5
           consumer:
+            client_expired_in_seconds: 30
             fetch_max_messages: 100
+            fetch_max_bytes: 10485760
+            fetch_max_wait_ms: 1000
           queues:
-            type: indexing_merge
+            type: merge_to_bulk
           when:
             cluster_available: [ "logging" ]
-
 
   # pipelines for primary cluster
   - name: consume-queue_primary-dead_retry-to-primary
@@ -762,6 +788,7 @@ pipeline:
   - name: consume-queue_primary-failure-to-backup
     auto_start: true
     keep_running: true
+    retry_delay_in_ms: 1000
     processor:
       - flow_runner:
           input_queue: "primary-failure"
@@ -781,8 +808,11 @@ pipeline:
           input_queue: "backup"
           flow: backup-flow-reshuffle-replicate-processing
           commit_on_tag: "commit_message_allowed"
+          idle_timeout_in_seconds: 10
           consumer:
-            fetch_max_messages: 100
+            fetch_max_messages: 1000
+            fetch_max_bytes: 10485760
+            fetch_max_wait_ms: 10000
           when:
             and:
               - cluster_available: ["backup"]
@@ -801,11 +831,25 @@ pipeline:
             #compress: true
             batch_size_in_mb: 20
             batch_size_in_docs: 50000
+            output_bulk_stats: true
+            response_handle:
+              save_success_results: true
+              save_error_results: true
+              save_busy_results: true
+              include_index_stats: true
+              include_action_stats: true
+              include_error_details: true
+              bulk_result_message_queue: "bulk_result_messages"
+              max_request_body_size: 10240
+              max_response_body_size: 10240
+              max_error_details_count: 5
           consumer:
-            fetch_max_messages: 100
+            fetch_max_messages: 1000
+            fetch_max_bytes: 10485760
+            fetch_max_wait_ms: 10000
           max_worker_size: 200
           num_of_slices: 10
-          idle_timeout_in_seconds: 30
+          idle_timeout_in_seconds: 10
 #          slices: [0]
           waiting_after:
             - "backup-failure"
