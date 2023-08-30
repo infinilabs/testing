@@ -1,0 +1,17 @@
+entry:
+  - name: my_es_entry1
+    enabled: true
+    router: my_router
+    max_concurrency: 200000
+    network:
+      binding: 0.0.0.0:8002
+
+flow:
+  - name: hello_world1
+    filter:
+      - echo:
+          message: "hello hello_world3"
+
+router:
+  - name: my_router1
+    default_flow: hello_world

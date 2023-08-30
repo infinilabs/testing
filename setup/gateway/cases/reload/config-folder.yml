@@ -1,0 +1,2 @@
+path.configs: /Users/medcl/go/src/infini.sh/testing/setup/gateway/cases/reload/config-folder
+configs.auto_reload: true

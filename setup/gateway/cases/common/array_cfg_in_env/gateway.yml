@@ -1,0 +1,7 @@
+env:
+  ES_HOSTS: ["http://127.0.0.1:9201"]
+
+elasticsearch:
+  - name: primary
+    enabled: true
+    endpoints: $[[env.ES_HOSTS]]
