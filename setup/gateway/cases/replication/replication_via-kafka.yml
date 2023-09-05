@@ -1,42 +1,18 @@
-allow_multi_instance: true
+#allow_multi_instance: true
 env:
   #gateway
   GATEWAY_HOST: 0.0.0.0:18000
   GATEWAY_TLS_ENABLED: false
   ENFORCE_BULK_REQUESTS_ONLY: false #when this set to `true`, index delete, reindex, update_by_query, delete_by_query are not allowed.
 
-  #api
-  API_HOST: 0.0.0.0:12900
-
-  #disk_queue
-  DISK_QUEUE_COMPRESS_SEGMENT_ENABLED: true
-  DISK_QUEUE_RETENTION_MAX_NUM_OF_LOCAL_FILES: 30
-  DISK_QUEUE_UPLOAD_TO_S3: false
-
-  #s3
-  S3_SERVER_NAME: mys3
-  S3_LOCATION: beijing
-  S3_HOST: "192.168.3.188:9000"
-  S3_BUCKET_NAME: "infini-store"
-  S3_ACCESS_KEY: "key"
-  S3_ACCESS_SECRET: "secret"
-
-  ELASTIC_HEALTH_CHECK_ENABLED: true
-  ELASTIC_AVAILABILITY_CHECK_ENABLED: true
-  ELASTIC_METADATA_REFRESH_ENABLED: true
-  ELASTIC_CLUSTER_SETTINGS_CHECK_ENABLED: false
-
-  #metrics
-  METRICS_ENABLED: true
-
-  #floating_ip
-  FLOATING_IP_ENABLED: false
-  FLOATING_IP_ADDRESS: 192.168.3.1
-  FLOATING_IP_MASK: 255.255.255.0
-  FLOATING_IP_INTERFACE: eth1
+  #partition
+  REPLICATION_PARTITION_SIZE: 10
+  REQUEST_RESHUFFLE_PARTITION_SIZE: 10
+  BULK_RESHUFFLE_PARTITION_SIZE: 10
+  BULK_RESHUFFLE_LEVEL: "cluster" #cluster,node,index,shard
 
   #primary
-  PRIMARY_ENDPOINTS: [ 'http://192.168.3.185:17900' ]
+  PRIMARY_ENDPOINTS: [ 'http://localhost:9200' ]
   PRIMARY_USERNAME: elastic
   PRIMARY_PASSWORD: elastic
   PRIMARY_MAX_QPS_PER_NODE: 10000
@@ -73,8 +49,38 @@ env:
   LOGGING_DISCOVERY_REFRESH_ENABLED: false
 
   #kafka
-  KAFKA_HOSTS: [ 'localhost:9092' ]
-#  KAFKA_HOSTS: [ '192.168.3.185:9092','192.168.3.185:9093' ,'192.168.3.185:9094' ]
+  #  KAFKA_HOSTS: [ 'localhost:9092' ]
+  KAFKA_HOSTS: [ '192.168.3.185:9092','192.168.3.185:9093' ,'192.168.3.185:9094' ]
+
+  #api
+  API_HOST: 0.0.0.0:12900
+
+  #disk_queue
+  DISK_QUEUE_COMPRESS_SEGMENT_ENABLED: true
+  DISK_QUEUE_RETENTION_MAX_NUM_OF_LOCAL_FILES: 30
+  DISK_QUEUE_UPLOAD_TO_S3: false
+
+  #s3
+  S3_SERVER_NAME: mys3
+  S3_LOCATION: beijing
+  S3_HOST: "192.168.3.188:9000"
+  S3_BUCKET_NAME: "infini-store"
+  S3_ACCESS_KEY: "key"
+  S3_ACCESS_SECRET: "secret"
+
+  ELASTIC_HEALTH_CHECK_ENABLED: true
+  ELASTIC_AVAILABILITY_CHECK_ENABLED: true
+  ELASTIC_METADATA_REFRESH_ENABLED: true
+  ELASTIC_CLUSTER_SETTINGS_CHECK_ENABLED: false
+
+  #metrics
+  METRICS_ENABLED: true
+
+  #floating_ip
+  FLOATING_IP_ENABLED: false
+  FLOATING_IP_ADDRESS: 192.168.3.1
+  FLOATING_IP_MASK: 255.255.255.0
+  FLOATING_IP_INTERFACE: eth1
 
 #configs
 path.data: data
@@ -252,12 +258,24 @@ flow:
               #                "*": _doc #统一索引的 Type 类型，适合旧版本多 Type 迁移到新版本集群
               remove_pipeline: true
               generate_enhanced_id: true
+          - hash_mod: #hash requests to different queues
+              source: "$[[_ctx.remote_ip]]_$[[_ctx.request.username]]_$[[_ctx.request.path]]_$[[_sys.second_of_now]]" #for debugging only, $[[_sys.second_of_now]] should be removed
+              #              source: "$[[_ctx.remote_ip]]_$[[_ctx.request.username]]_$[[_ctx.request.path]]"
+              target_context_name: "partition_id"
+              mod: $[[env.REPLICATION_PARTITION_SIZE]] #hash to 10 queues
+              add_to_header: true
           - set_context:
               context:
                 _ctx.request.header.X-Replicated-ID: $[[_util.increment_id.request_number_id]]_$[[_util.generate_uuid]]
+                _ctx.request.header.X-Replicated-Timestamp: $[[_sys.unix_timestamp_of_now]]
                 _ctx.request.header.X-Replicated: "true"
           - queue: #handle dirty_writes, pre-commit
-              queue_name: "primary_write_ahead_log"
+              queue_name: "primary_write_ahead_log##$[[partition_id]]"
+              save_last_produced_message_offset: true
+              last_produced_message_offset_key: "LAST_PRODUCED_MESSAGE_OFFSET"
+              labels:
+                type: "primary_write_ahead_log"
+                partition_id: "$[[partition_id]]"
           - elasticsearch: #集群可用，直接处理请求
               elasticsearch: "primary"
               max_connection_per_node: 1000
@@ -266,8 +284,11 @@ flow:
                 enabled: true
                 interval: 30s
           - queue: #handle dirty_writes, second-commit
-              queue_name: "primary_first_commit_log"
-              message: "$[[_ctx.request.header.X-Replicated-ID]]#$[[_ctx.request.header.LAST_PRODUCED_MESSAGE_OFFSET]]"
+              queue_name: "primary_first_commit_log##$[[partition_id]]"
+              labels:
+                type: "primary_first_commit_log"
+                partition_id: "$[[partition_id]]"
+              message: "$[[_ctx.request.header.X-Replicated-ID]]#$[[_ctx.request.header.LAST_PRODUCED_MESSAGE_OFFSET]]#$[[_sys.unix_timestamp_of_now]]"
           - bulk_response_process: #bulk 出错不继续执行后续 flow，因为成功、失败、非法的请求都已经入队，可以直接退出
               #              success_flow: "replicate-primary-writes-to-backup-queue"
               failure_queue: "primary-failure" #失败的请求，两边的集群都要做一次，避免脏数据
@@ -278,10 +299,10 @@ flow:
                 retry_429: true
                 retry_4xx: false
                 denied:
-#                  status: [ 503 ]
+                  #                  status: [ 503 ]
                   keyword:
                     - "illegal_state_exception"
-#                    - "503 Service Unavailable"
+          #                    - "503 Service Unavailable"
           #                    - '{"error":true,"message":"timeout"}' #timout, but requests may already send to es, need to redo
           - flow: # 非 bulk 请求继续判断
               flows:
@@ -352,8 +373,8 @@ flow:
             _ctx.response.status: [ 429,0,500,503 ]
         then:
           - drop:
-#      - tag:
-#          add: [ "start_bulk_response_process" ]
+      #      - tag:
+      #          add: [ "start_bulk_response_process" ]
       - bulk_response_process: #bulk 成功执行了，非法消息都入队，其他消息都不用管，继续重试，只有全部成功或者失败的时候才 commit，请求丢给 backup，否则提前结束
           failure_queue: "primary-failure" #保存用来查看消息日志
           invalid_queue: "primary-invalid" #保存用来查看消息日志
@@ -370,8 +391,8 @@ flow:
               status: [ ]
               keyword:
                 - "illegal_state_exception"
-#      - tag:
-#          add: [ "end_bulk_response_process" ]
+      #      - tag:
+      #          add: [ "end_bulk_response_process" ]
       - if: #其他的非 bulk 请求处理，先处理不合法的请求，主集群都失败了，副集群就不用考虑了
           and:
             - not:
@@ -394,84 +415,75 @@ flow:
               add: [ "commit_message_allowed" ]
 
 
-#  - name: backup-post-processing #备集群的故障处理，重试，处理通过 commit，处理失败重试，非法请求丢弃
-#    filter:
-#      - if:
-#          not:
-#            cluster_available: [ "backup" ]
-#        then:
-#          - elasticsearch_health_check:
-#              elasticsearch: "backup"
-#          - sleep:
-#              sleep_in_million_seconds: 5000
-#          - drop:
-#      - flow:
-#          flows:
-#            - set-auth-for-backup-flow
-#      - elasticsearch:
-#          elasticsearch: "backup"
-#          max_connection_per_node: 1000
-#          max_retry_times: 0
-#          refresh:
-#            enabled: true
-#            interval: 30s
-#      - if: #请求失败了，继续重试
-#          in:
-#            _ctx.response.status: [ 429,0,500,503 ]
-#        then:
-#          - drop:
-#      - bulk_response_process: #bulk 成功执行了，非法消息都入队，其他消息都不用管，继续重试，只有全部成功或者失败的时候才 commit，请求丢给 backup，否则提前结束
-#          invalid_queue: "backup-invalid" #保存用来查看消息日志
-#          tag_on_all_invalid: [ "commit_message_allowed" ] #只有都是非法请求的情况下才 commit
-#          tag_on_all_success: [ "commit_message_allowed" ] #只有都是成功的情况下才 commit
-#          continue_on_all_error: true #bulk 请求整体响应不是200，继续交由后面的 filter 进行处理
-#          retry_rules:
-#            default: true
-#            retry_429: true
-#            retry_4xx: false
-#            denied:
-#              status: [ ]
-#              keyword:
-#                - "illegal_state_exception"
-#      - if: #其他的非 bulk 请求处理，先处理不合法的请求，主集群都失败了，副集群就不用考虑了
-#          and:
-#            - not:
-#                in:
-#                  _ctx.response.status: [ 429 ] #400_500 之间但不包括 429
-#            - range:
-#                _ctx.response.status.gte: 400
-#                _ctx.response.status.lt: 500
-#        then:
-#          - tag:
-#              add: [ "commit_message_allowed" ]
-#          - queue:
-#              queue_name: "backup-invalid"
-#          - drop:
-#      - if:
-#          in:
-#            _ctx.response.status: [ 200,201 ]
-#        then:
-#          - tag:
-#              add: [ "commit_message_allowed" ]
+  #  - name: backup-post-processing #备集群的故障处理，重试，处理通过 commit，处理失败重试，非法请求丢弃
+  #    filter:
+  #      - if:
+  #          not:
+  #            cluster_available: [ "backup" ]
+  #        then:
+  #          - elasticsearch_health_check:
+  #              elasticsearch: "backup"
+  #          - sleep:
+  #              sleep_in_million_seconds: 5000
+  #          - drop:
+  #      - flow:
+  #          flows:
+  #            - set-auth-for-backup-flow
+  #      - elasticsearch:
+  #          elasticsearch: "backup"
+  #          max_connection_per_node: 1000
+  #          max_retry_times: 0
+  #          refresh:
+  #            enabled: true
+  #            interval: 30s
+  #      - if: #请求失败了，继续重试
+  #          in:
+  #            _ctx.response.status: [ 429,0,500,503 ]
+  #        then:
+  #          - drop:
+  #      - bulk_response_process: #bulk 成功执行了，非法消息都入队，其他消息都不用管，继续重试，只有全部成功或者失败的时候才 commit，请求丢给 backup，否则提前结束
+  #          invalid_queue: "backup-invalid" #保存用来查看消息日志
+  #          tag_on_all_invalid: [ "commit_message_allowed" ] #只有都是非法请求的情况下才 commit
+  #          tag_on_all_success: [ "commit_message_allowed" ] #只有都是成功的情况下才 commit
+  #          continue_on_all_error: true #bulk 请求整体响应不是200，继续交由后面的 filter 进行处理
+  #          retry_rules:
+  #            default: true
+  #            retry_429: true
+  #            retry_4xx: false
+  #            denied:
+  #              status: [ ]
+  #              keyword:
+  #                - "illegal_state_exception"
+  #      - if: #其他的非 bulk 请求处理，先处理不合法的请求，主集群都失败了，副集群就不用考虑了
+  #          and:
+  #            - not:
+  #                in:
+  #                  _ctx.response.status: [ 429 ] #400_500 之间但不包括 429
+  #            - range:
+  #                _ctx.response.status.gte: 400
+  #                _ctx.response.status.lt: 500
+  #        then:
+  #          - tag:
+  #              add: [ "commit_message_allowed" ]
+  #          - queue:
+  #              queue_name: "backup-invalid"
+  #          - drop:
+  #      - if:
+  #          in:
+  #            _ctx.response.status: [ 200,201 ]
+  #        then:
+  #          - tag:
+  #              add: [ "commit_message_allowed" ]
 
   - name: backup-flow-request-reshuffle
     filter:
-      - if:
-          not:
-            cluster_available: [ "backup" ]
-        then:
-          - elasticsearch_health_check:
-              elasticsearch: "backup"
-          - sleep:
-              sleep_in_million_seconds: 5000
-          - drop:
       - flow:
           flows:
             - set-auth-for-backup-flow
       - request_reshuffle: #reshuffle none-bulk requests
           elasticsearch: "backup"
           queue_name_prefix: "request_reshuffle"
-          partition_size: 10
+          partition_size: $[[env.REQUEST_RESHUFFLE_PARTITION_SIZE]]
           tag_on_success: [ "commit_message_allowed" ]
       - bulk_reshuffle: #reshuffle bulk requests
           when:
@@ -479,9 +491,11 @@ flow:
               _ctx.request.path: /_bulk
           elasticsearch: "backup"
           queue_name_prefix: "async_bulk"
-          level: cluster #cluster,node,index,shard
-          partition_size: 10
+          level: $[[env.BULK_RESHUFFLE_LEVEL]] #cluster,node,index,shard
+          partition_size: $[[env.BULK_RESHUFFLE_PARTITION_SIZE]]
           fix_null_id: true
+          index_stats_analysis: false
+          action_stats_analysis: false
           tag_on_success: [ "commit_message_allowed" ]
 
   - name: backup-flow-replicate-processing
@@ -545,8 +559,11 @@ flow:
   - name: tracing-flow # this flow is used for request tracing, refer to `router`'s `tracing_flow`
     filter:
       - queue: #handle dirty_writes, second-commit
-          queue_name: "primary_final_commit_log"
-          message: "$[[_ctx.request.header.X-Replicated-ID]]#$[[_ctx.request.header.LAST_PRODUCED_MESSAGE_OFFSET]]"
+          queue_name: "primary_final_commit_log##$[[partition_id]]"
+          labels:
+            type: "primary_final_commit_log"
+            partition_id: "$[[partition_id]]"
+          message: "$[[_ctx.request.header.X-Replicated-ID]]#$[[_ctx.request.header.LAST_PRODUCED_MESSAGE_OFFSET]]#$[[_sys.unix_timestamp_of_now]]"
           when:
             equals:
               _ctx.request.header.X-Replicated: "true"
@@ -697,6 +714,7 @@ pipeline:
     singleton: true
     processor:
       - replication_correlation:
+          partition_size: $[[env.REPLICATION_PARTITION_SIZE]]
           elasticsearch: "logging"
           index_name: ".infini_replication_results"
 
@@ -788,9 +806,9 @@ pipeline:
               max_error_details_count: 5
           consumer:
             client_expired_in_seconds: 30
-            fetch_max_messages: 1000
+            fetch_max_messages: 5000
             fetch_max_bytes: 10485760
-            fetch_max_wait_ms: 1000
+            fetch_max_wait_ms: 5000
           queues:
             type: merge_to_bulk
           when:
@@ -824,47 +842,51 @@ pipeline:
           consumer:
             group: primary
             name: primary-failure
-            fetch_max_messages: 1000
+            fetch_max_messages: 5000
             fetch_max_bytes: 10485760
-            fetch_max_wait_ms: 1000
+            fetch_max_wait_ms: 5000
           when:
             cluster_available: [ "primary" ]
 
-#  - name: consume-queue_primary-failure-to-backup #not required, since we replicate all wal logs
-#    auto_start: true
-#    keep_running: true
-#    singleton: true
-#    retry_delay_in_ms: 1000
-#    processor:
-#      - flow_runner:
-#          input_queue: "primary-failure"
-#          flow: backup-post-processing
-#          commit_on_tag: "commit_message_allowed"
-#          consumer:
-#            group: backup
-#            name: primary-failure
-#            fetch_max_messages: 100
-#            fetch_max_bytes: 10485760
-#            fetch_max_wait_ms: 1000
-#          when:
-#            cluster_available: [ "backup" ]
+  #  - name: consume-queue_primary-failure-to-backup #not required, since we replicate all wal logs
+  #    auto_start: true
+  #    keep_running: true
+  #    singleton: true
+  #    retry_delay_in_ms: 1000
+  #    processor:
+  #      - flow_runner:
+  #          input_queue: "primary-failure"
+  #          flow: backup-post-processing
+  #          commit_on_tag: "commit_message_allowed"
+  #          consumer:
+  #            group: backup
+  #            name: primary-failure
+  #            fetch_max_messages: 100
+  #            fetch_max_bytes: 10485760
+  #            fetch_max_wait_ms: 1000
+  #          when:
+  #            cluster_available: [ "backup" ]
 
   - name: backup-flow-request-reshuffle
     auto_start: true
     keep_running: true
     singleton: true
-    retry_delay_in_ms: 5000
+    retry_delay_in_ms: 10
     processor:
-      - flow_runner:
-          input_queue: "primary_write_ahead_log"
-          flow: backup-flow-request-reshuffle
-          commit_on_tag: "commit_message_allowed"
-          idle_timeout_in_seconds: 10
+      - consumer:
+          max_worker_size: 100
+          queue_selector:
+            labels:
+              type: "primary_write_ahead_log"
           consumer:
             group: request-reshuffle
-            fetch_max_messages: 1000
-            fetch_max_bytes: 10485760
-            fetch_max_wait_ms: 1000
+            fetch_max_messages: 10000
+            fetch_max_bytes: 20485760
+            fetch_max_wait_ms: 10000
+          processor:
+            - flow_replay:
+                flow: backup-flow-request-reshuffle
+                commit_on_tag: "commit_message_allowed"
 
   - name: consume-queue_request-reshuffle
     auto_start: true
@@ -886,9 +908,9 @@ pipeline:
             - flow_replay:
                 flow: backup-flow-replicate-processing
                 commit_on_tag: "commit_message_allowed"
-#          when:
-#            and:
-#              - cluster_available: [ "backup" ]
+  #          when:
+  #            and:
+  #              - cluster_available: [ "backup" ]
 
   - name: consume-queue_backup-bulk_request_ingestion-to-backup
     auto_start: true
@@ -913,15 +935,15 @@ pipeline:
               max_response_body_size: 10240
               max_error_details_count: 5
           consumer:
-            fetch_max_messages: 1000
+            fetch_max_messages: 5000
             fetch_max_bytes: 10485760 #10MB
-            fetch_max_wait_ms: 1000
+            fetch_max_wait_ms: 10000
             client_expired_in_seconds: 30
           max_worker_size: 200
           #          num_of_slices: 10
           idle_timeout_in_seconds: 30
-#          waiting_after:
-#            - "backup-failure"
+          #          waiting_after:
+          #            - "backup-failure"
           queues:
             type: bulk_reshuffle
           when:
@@ -1016,3 +1038,4 @@ floating_ip:
   netmask: $[[env.FLOATING_IP_MASK]]
   interface: $[[env.FLOATING_IP_INTERFACE]]
   priority: 100
+
