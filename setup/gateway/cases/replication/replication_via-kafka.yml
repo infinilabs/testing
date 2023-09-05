@@ -1,4 +1,3 @@
-#allow_multi_instance: true
 env:
   #gateway
   GATEWAY_HOST: 0.0.0.0:18000
@@ -239,10 +238,6 @@ flow:
       - auto_generate_doc_id: # 处理非 Bulk 请求，但是文档新增，且默认自增 ID 的情况
       - if:
           or:
-            #            - consumer_has_lag:
-            #                queue: "primary-failure"
-            #                group: primary
-            #                name: primary-failure
             - not:
                 cluster_available: [ "primary" ]
         then: #集群可用但是集群有堆积的情况，不处理客户端请求，待服务恢复之后再提供服务
@@ -307,23 +302,7 @@ flow:
           - flow: # 非 bulk 请求继续判断
               flows:
                 - primary-response-check
-  #  - name: replicate-primary-writes-to-backup-queue
-  #    filter:
-  #      - flow:
-  #          flows:
-  #            - set-auth-for-backup-flow
-  #      - rewrite_to_bulk: #rewrite docs create/update/delete operation to bulk request
-  #      - bulk_reshuffle: #handle bulk requests, TODO, need always save to queue, no docs will be skipped
-  #          when:
-  #            contains:
-  #              _ctx.request.path: /_bulk
-  #          elasticsearch: "backup"
-  #          queue_name_prefix: "async_bulk"
-  #          level: cluster #cluster,node,index,shard
-  #          partition_size: 10
-  #          fix_null_id: true
-  #      - queue: #handle none-bulk requests<1. send to none-bulk queue>
-  #          queue_name: "backup"
+
   - name: primary-response-check
     filter:
       - if: #不合法的请求
@@ -342,9 +321,6 @@ flow:
           in:
             _ctx.response.status: [ 200,201 ]
         then: #仅正常处理的集群才转发给后端集群, comment out if we consume wal directly
-          #          - flow:
-          #              flows:
-          #                - replicate-primary-writes-to-backup-queue
           - drop:
         else: #集群可用的情况下但是失败了，可能存在脏写，将请求放入写入失败队列，后续可以选择两边集群都重做一次，最终确保一致性，写 translog，后续提供 UI 可以进行三方检查：主、备集群和本地日志
           - queue:
@@ -373,8 +349,6 @@ flow:
             _ctx.response.status: [ 429,0,500,503 ]
         then:
           - drop:
-      #      - tag:
-      #          add: [ "start_bulk_response_process" ]
       - bulk_response_process: #bulk 成功执行了，非法消息都入队，其他消息都不用管，继续重试，只有全部成功或者失败的时候才 commit，请求丢给 backup，否则提前结束
           failure_queue: "primary-failure" #保存用来查看消息日志
           invalid_queue: "primary-invalid" #保存用来查看消息日志
@@ -391,8 +365,6 @@ flow:
               status: [ ]
               keyword:
                 - "illegal_state_exception"
-      #      - tag:
-      #          add: [ "end_bulk_response_process" ]
       - if: #其他的非 bulk 请求处理，先处理不合法的请求，主集群都失败了，副集群就不用考虑了
           and:
             - not:
@@ -413,67 +385,6 @@ flow:
         then:
           - tag:
               add: [ "commit_message_allowed" ]
-
-
-  #  - name: backup-post-processing #备集群的故障处理，重试，处理通过 commit，处理失败重试，非法请求丢弃
-  #    filter:
-  #      - if:
-  #          not:
-  #            cluster_available: [ "backup" ]
-  #        then:
-  #          - elasticsearch_health_check:
-  #              elasticsearch: "backup"
-  #          - sleep:
-  #              sleep_in_million_seconds: 5000
-  #          - drop:
-  #      - flow:
-  #          flows:
-  #            - set-auth-for-backup-flow
-  #      - elasticsearch:
-  #          elasticsearch: "backup"
-  #          max_connection_per_node: 1000
-  #          max_retry_times: 0
-  #          refresh:
-  #            enabled: true
-  #            interval: 30s
-  #      - if: #请求失败了，继续重试
-  #          in:
-  #            _ctx.response.status: [ 429,0,500,503 ]
-  #        then:
-  #          - drop:
-  #      - bulk_response_process: #bulk 成功执行了，非法消息都入队，其他消息都不用管，继续重试，只有全部成功或者失败的时候才 commit，请求丢给 backup，否则提前结束
-  #          invalid_queue: "backup-invalid" #保存用来查看消息日志
-  #          tag_on_all_invalid: [ "commit_message_allowed" ] #只有都是非法请求的情况下才 commit
-  #          tag_on_all_success: [ "commit_message_allowed" ] #只有都是成功的情况下才 commit
-  #          continue_on_all_error: true #bulk 请求整体响应不是200，继续交由后面的 filter 进行处理
-  #          retry_rules:
-  #            default: true
-  #            retry_429: true
-  #            retry_4xx: false
-  #            denied:
-  #              status: [ ]
-  #              keyword:
-  #                - "illegal_state_exception"
-  #      - if: #其他的非 bulk 请求处理，先处理不合法的请求，主集群都失败了，副集群就不用考虑了
-  #          and:
-  #            - not:
-  #                in:
-  #                  _ctx.response.status: [ 429 ] #400_500 之间但不包括 429
-  #            - range:
-  #                _ctx.response.status.gte: 400
-  #                _ctx.response.status.lt: 500
-  #        then:
-  #          - tag:
-  #              add: [ "commit_message_allowed" ]
-  #          - queue:
-  #              queue_name: "backup-invalid"
-  #          - drop:
-  #      - if:
-  #          in:
-  #            _ctx.response.status: [ 200,201 ]
-  #        then:
-  #          - tag:
-  #              add: [ "commit_message_allowed" ]
 
   - name: backup-flow-request-reshuffle
     filter:
@@ -589,18 +500,6 @@ flow:
           body: "request not allowed"
           status: 500
 
-#modules:
-#  - name: pipeline
-#    enabled: false
-#  - name: elasticsearch
-#    enabled: false
-#plugins:
-#  - name: gateway
-#    enabled: false
-#  - name: metrics
-#    enabled: false
-
-
 router:
   - name: my_router
     default_flow: primary-write-flow
@@ -702,11 +601,6 @@ elasticsearch:
         enabled: $[[env.LOGGING_DISCOVERY_REFRESH_ENABLED]]
         interval: 60s
 
-
-#modules:
-#  - name: pipeline
-#    enabled: false
-
 pipeline:
   - name: replication_correlation
     auto_start: true
@@ -796,7 +690,6 @@ pipeline:
             compress: false
             batch_size_in_mb: 20
             batch_size_in_docs: 50000
-            #remove_duplicated_newlines: true
             invalid_queue: "invalid_request"
             response_handle:
               bulk_result_message_queue: "system_failure_messages"
@@ -848,25 +741,6 @@ pipeline:
           when:
             cluster_available: [ "primary" ]
 
-  #  - name: consume-queue_primary-failure-to-backup #not required, since we replicate all wal logs
-  #    auto_start: true
-  #    keep_running: true
-  #    singleton: true
-  #    retry_delay_in_ms: 1000
-  #    processor:
-  #      - flow_runner:
-  #          input_queue: "primary-failure"
-  #          flow: backup-post-processing
-  #          commit_on_tag: "commit_message_allowed"
-  #          consumer:
-  #            group: backup
-  #            name: primary-failure
-  #            fetch_max_messages: 100
-  #            fetch_max_bytes: 10485760
-  #            fetch_max_wait_ms: 1000
-  #          when:
-  #            cluster_available: [ "backup" ]
-
   - name: backup-flow-request-reshuffle
     auto_start: true
     keep_running: true
@@ -908,9 +782,6 @@ pipeline:
             - flow_replay:
                 flow: backup-flow-replicate-processing
                 commit_on_tag: "commit_message_allowed"
-  #          when:
-  #            and:
-  #              - cluster_available: [ "backup" ]
 
   - name: consume-queue_backup-bulk_request_ingestion-to-backup
     auto_start: true
@@ -948,19 +819,6 @@ pipeline:
             type: bulk_reshuffle
           when:
             cluster_available: [ "backup" ]
-
-#  - name: consume-queue_backup-failure-to-backup
-#    auto_start: false
-#    keep_running: true
-#    singleton: true
-#    processor:
-#      - flow_runner:
-#          input_queue: "backup-failure"
-#          flow: backup-flow-replicate-processing
-#          commit_on_tag: "commit_message_allowed"
-#          #          skip_empty_queue: false
-#          when:
-#            cluster_available: [ "backup" ]
 
 ## let's upload disk queue files to s3 for backup
 disk_queue:
