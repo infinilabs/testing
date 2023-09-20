@@ -5,9 +5,9 @@ env:
   ENFORCE_BULK_REQUESTS_ONLY: false #when this set to `true`, index delete, reindex, update_by_query, delete_by_query are not allowed.
 
   #partition
-  REPLICATION_PARTITION_SIZE: 1
-  REQUEST_RESHUFFLE_PARTITION_SIZE: 1
-  BULK_RESHUFFLE_PARTITION_SIZE: 1
+  REPLICATION_PARTITION_SIZE: 1 #write ahead log partition size
+  REQUEST_RESHUFFLE_PARTITION_SIZE: 1 #none-bulk requests partition size
+  BULK_RESHUFFLE_PARTITION_SIZE: 1 # bulk requests partition size
   BULK_RESHUFFLE_LEVEL: "cluster" #cluster,node,index,shard
 
   #primary
@@ -393,6 +393,8 @@ flow:
       - flow:
           flows:
             - set-auth-for-backup-flow
+      - rewrite_to_bulk: # 改写文档操作位 bulk 请求
+          type_removed: true # remove type `_doc` from the new versions of Elasticsearch
       - request_reshuffle: #reshuffle none-bulk requests
           elasticsearch: "backup"
           queue_name_prefix: "request_reshuffle"

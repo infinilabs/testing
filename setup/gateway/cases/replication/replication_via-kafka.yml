@@ -5,9 +5,9 @@ env:
   ENFORCE_BULK_REQUESTS_ONLY: false #when this set to `true`, index delete, reindex, update_by_query, delete_by_query are not allowed.
 
   #partition
-  REPLICATION_PARTITION_SIZE: 10
-  REQUEST_RESHUFFLE_PARTITION_SIZE: 10
-  BULK_RESHUFFLE_PARTITION_SIZE: 10
+  REPLICATION_PARTITION_SIZE: 10 #write ahead log partition size
+  REQUEST_RESHUFFLE_PARTITION_SIZE: 10 #none-bulk requests partition size
+  BULK_RESHUFFLE_PARTITION_SIZE: 10 # bulk requests partition size
   BULK_RESHUFFLE_LEVEL: "cluster" #cluster,node,index,shard
 
   #primary
@@ -254,7 +254,7 @@ flow:
               remove_pipeline: true
               generate_enhanced_id: true
           - hash_mod: #hash requests to different queues
-              source: "$[[_ctx.remote_ip]]_$[[_ctx.request.username]]_$[[_ctx.request.path]]_$[[_sys.second_of_now]]" #for debugging only, $[[_sys.second_of_now]] should be removed
+              source: "$[[_ctx.remote_ip]]_$[[_ctx.request.username]]_$[[_ctx.request.path]]" #for debugging only, $[[_util.generate_uuid]] should be removed
               #              source: "$[[_ctx.remote_ip]]_$[[_ctx.request.username]]_$[[_ctx.request.path]]"
               target_context_name: "partition_id"
               mod: $[[env.REPLICATION_PARTITION_SIZE]] #hash to 10 queues
@@ -391,6 +391,8 @@ flow:
       - flow:
           flows:
             - set-auth-for-backup-flow
+      - rewrite_to_bulk: # 改写文档操作位 bulk 请求
+          type_removed: true # remove type `_doc` from the new versions of Elasticsearch
       - request_reshuffle: #reshuffle none-bulk requests
           elasticsearch: "backup"
           queue_name_prefix: "request_reshuffle"
