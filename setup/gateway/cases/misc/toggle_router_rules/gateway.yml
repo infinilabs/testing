@@ -1,12 +1,9 @@
 env:
-  LR_GATEWAY_HOST: 127.0.0.1:8001
-  LR_GATEWAY_API_HOST: 127.0.0.1:9000
-  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
-env:
   LR_GATEWAY_HOST1: 0.0.0.0:8000
   LR_GATEWAY_HOST2: 0.0.0.0:8002
   LR_GATEWAY_HOST3: 0.0.0.0:8003
   LR_GATEWAY_HOST4: 0.0.0.0:8004
+  HOST: "HOST1"
 
 path.data: data
 path.logs: log
@@ -17,7 +14,7 @@ entry:
     router: my_router
     max_concurrency: 200000
     network:
-      binding: $[[env.LR_GATEWAY_HOST1]]
+      binding: $[[env.LR_GATEWAY_$[[env.HOST]]]]
   - name: my_es_entry2
     enabled: true
     router: toggle_enabled_router

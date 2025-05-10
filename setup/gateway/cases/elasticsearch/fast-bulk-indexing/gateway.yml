@@ -1,0 +1,87 @@
+env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+path.data: data
+path.logs: log
+
+entry:
+  - name: my_es_entry
+    enabled: true
+    router: my_router
+    max_concurrency: 1000
+    network:
+      binding: $[[env.LR_GATEWAY_HOST]]
+
+flow:
+  - name: async_bulk
+    filter:
+      - bulk_reshuffle:
+          elasticsearch: prod
+          level: cluster
+          partition_size: 3
+          fix_null_id: true
+
+  - name: es-flow
+    filter:
+      - elasticsearch:
+          elasticsearch: prod #elasticsearch configure reference name
+          max_connection_per_node: 1000 #max tcp connection to upstream, default for all nodes
+          max_response_size: -1 #default for all nodes
+          timeout: 10
+          balancer: weight
+          refresh: # refresh upstream nodes list, need to enable this feature to use elasticsearch nodes auto discovery
+            enabled: true
+            interval: 60s
+          filter:
+            roles:
+              exclude:
+                - master
+                - master
+
+router:
+  - name: my_router
+    default_flow: es-flow
+    rules:
+      - method: '*'
+        pattern:
+          - '/_bulk'
+          - '/{index_name}/_bulk'
+        flow:
+          - async_bulk
+
+elasticsearch:
+  - name: prod
+    enabled: true
+    schema: http
+    endpoints:
+      - $[[env.ELASTICSEARCH_ENDPOINT]]
+    discovery:
+      enabled: true
+      refresh:
+        enabled: true
+        interval: 60s
+
+pipeline:
+  - name: bulk_request_ingest
+    auto_start: true
+    keep_running: true
+    retry_delay_in_ms: 1000
+    processor:
+      - fast_bulk_indexing:
+          idle_timeout_in_seconds: 1
+          max_connection_per_node: 1000
+          worker_size: 3
+          bulk:
+            compress: false
+            batch_size_in_mb: 10
+            batch_size_in_docs: 1
+          queues:
+            type: bulk_reshuffle
+
+stats:
+  enabled: false
+
+disk_queue:
+  sync_every_records: 10000
+  sync_timeout_in_ms: 10000

@@ -39,6 +39,9 @@ elasticsearch:
   - name: es-server
     enabled: true
     endpoints: $[[env.ELASTICSEARCH_ENDPOINT]]
+    basic_auth:
+      username: admin
+      password: b14612393da0d4e7a70b
     discovery:
       enabled: true
       refresh:

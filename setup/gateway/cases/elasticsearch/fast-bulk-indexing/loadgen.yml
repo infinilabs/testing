@@ -1,0 +1,62 @@
+env:
+  LR_GATEWAY_HOST: 127.0.0.1:8001
+  LR_GATEWAY_API_HOST: 127.0.0.1:9000
+  ELASTICSEARCH_ENDPOINT: http://127.0.0.1:9200
+runner:
+  total_rounds: 1
+  no_warm: true
+  log_requests: true
+  assert_invalid: true
+  assert_error: true
+requests:
+  # FIXME: now we need to wait for the bulk_reshull process to get ready
+  - sleep:
+      sleep_in_milli_seconds: 5000
+  - request:
+      method: POST
+      url: http://$[[env.LR_GATEWAY_HOST]]/_bulk
+      body: |
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
+        {"a": "b"}
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
+        {"a": "b"}
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
+        {"a": "b"}
+        { "index" : { "_index" : "fast-bulk-indexing-test", "_id" : "1" } }
+        {"a": "b"}
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+            _ctx.response.body_json.errors: false
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_doc/1
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 404
+  - sleep:
+      sleep_in_milli_seconds: 5000
+  - request:
+      method: POST
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_refresh
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+  - request:
+      method: GET
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test/_doc/1
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
+            _ctx.response.body_json._index: fast-bulk-indexing-test
+  - request:
+      method: DELETE
+      url: http://$[[env.LR_GATEWAY_HOST]]/fast-bulk-indexing-test
+    assert:
+      and:
+        - equals:
+            _ctx.response.status: 200
